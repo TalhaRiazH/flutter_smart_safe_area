@@ -1,5 +1,21 @@
 import 'package:flutter/widgets.dart';
 
+/// Applies [visible] and [opacity] to a safe-area fill [color].
+///
+/// Returns `null` when the bar should not be painted (`visible` is false,
+/// [color] is null, or [opacity] is `0`).
+Color? resolveSafeAreaFill({
+  Color? color,
+  double opacity = 1,
+  bool visible = true,
+}) {
+  if (!visible || color == null) return null;
+  final next = opacity.clamp(0.0, 1.0);
+  if (next <= 0) return null;
+  if (next >= 1) return color;
+  return color.withValues(alpha: color.a * next);
+}
+
 /// Paints optional colors in the system inset regions around [child].
 class SmartSafeAreaColorBars extends StatelessWidget {
   /// Creates overlay bars for each inset side that has a color.

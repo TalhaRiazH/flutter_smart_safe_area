@@ -41,6 +41,14 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     this.bottomSafeAreaColor,
     this.leftSafeAreaColor,
     this.rightSafeAreaColor,
+    this.showTopSafeArea,
+    this.showBottomSafeArea,
+    this.showLeftSafeArea,
+    this.showRightSafeArea,
+    this.topSafeAreaOpacity,
+    this.bottomSafeAreaOpacity,
+    this.leftSafeAreaOpacity,
+    this.rightSafeAreaOpacity,
     this.bottomBehavior,
     this.top,
     this.bottom,
@@ -117,6 +125,30 @@ class SmartSafeAreaScaffold extends StatelessWidget {
   /// Color of the right inset. `null` inherits from the config.
   final Color? rightSafeAreaColor;
 
+  /// Whether to paint the top inset color. `null` inherits from the config.
+  final bool? showTopSafeArea;
+
+  /// Whether to paint the bottom inset color. `null` inherits from the config.
+  final bool? showBottomSafeArea;
+
+  /// Whether to paint the left inset color. `null` inherits from the config.
+  final bool? showLeftSafeArea;
+
+  /// Whether to paint the right inset color. `null` inherits from the config.
+  final bool? showRightSafeArea;
+
+  /// Opacity of the top inset color (`0`–`1`). `null` inherits from the config.
+  final double? topSafeAreaOpacity;
+
+  /// Opacity of the bottom inset color (`0`–`1`). `null` inherits from the config.
+  final double? bottomSafeAreaOpacity;
+
+  /// Opacity of the left inset color (`0`–`1`). `null` inherits from the config.
+  final double? leftSafeAreaOpacity;
+
+  /// Opacity of the right inset color (`0`–`1`). `null` inherits from the config.
+  final double? rightSafeAreaOpacity;
+
   /// Bottom inset policy. `null` inherits from [SmartSafeAreaScope].
   ///
   /// When [extendBackground] is `false` and this is also `null`, the scaffold
@@ -178,10 +210,30 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     final behavior = bottomBehavior ??
         (extend ? inherited.bottomBehavior : BottomSafeAreaBehavior.always);
 
-    final topColor = topSafeAreaColor ?? inherited.topSafeAreaColor;
-    final bottomColor = bottomSafeAreaColor ?? inherited.bottomSafeAreaColor;
-    final leftColor = leftSafeAreaColor ?? inherited.leftSafeAreaColor;
-    final rightColor = rightSafeAreaColor ?? inherited.rightSafeAreaColor;
+    final showTop = showTopSafeArea ?? inherited.showTopSafeArea;
+    final showBottom = showBottomSafeArea ?? inherited.showBottomSafeArea;
+    final topColor = resolveSafeAreaFill(
+      color: topSafeAreaColor ?? inherited.topSafeAreaColor,
+      opacity: topSafeAreaOpacity ?? inherited.topSafeAreaOpacity,
+      visible: showTop,
+    );
+    final bottomColor = resolveSafeAreaFill(
+      color: bottomSafeAreaColor ?? inherited.bottomSafeAreaColor,
+      opacity: bottomSafeAreaOpacity ?? inherited.bottomSafeAreaOpacity,
+      visible: showBottom,
+    );
+    final leftColor = resolveSafeAreaFill(
+      color: leftSafeAreaColor ?? inherited.leftSafeAreaColor,
+      opacity: leftSafeAreaOpacity ?? inherited.leftSafeAreaOpacity,
+      visible: showLeftSafeArea ?? inherited.showLeftSafeArea,
+    );
+    final rightColor = resolveSafeAreaFill(
+      color: rightSafeAreaColor ?? inherited.rightSafeAreaColor,
+      opacity: rightSafeAreaOpacity ?? inherited.rightSafeAreaOpacity,
+      visible: showRightSafeArea ?? inherited.showRightSafeArea,
+    );
+    final hasBottomTint =
+        (bottomSafeAreaColor ?? inherited.bottomSafeAreaColor) != null;
 
     final bodyNeedsTop = applyTop && (appBar == null || extendBodyBehindAppBar);
     final bodyNeedsBottom =
@@ -190,7 +242,7 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     Widget? nav = bottomNavigationBar;
     if (nav != null && wrapBottomNavigationBar) {
       nav = SmartSystemNavBar(
-        color: extend ? (bottomColor ?? backgroundColor) : null,
+        color: extend ? (hasBottomTint ? bottomColor : backgroundColor) : null,
         bottomBehavior: behavior,
         threeButtonNavThreshold: threeButtonNavThreshold,
         child: nav,
@@ -219,6 +271,14 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         bottomSafeAreaColor: bodyNeedsBottom ? bottomColor : null,
         leftSafeAreaColor: leftColor,
         rightSafeAreaColor: rightColor,
+        showTopSafeArea: true,
+        showBottomSafeArea: true,
+        showLeftSafeArea: true,
+        showRightSafeArea: true,
+        topSafeAreaOpacity: 1,
+        bottomSafeAreaOpacity: 1,
+        leftSafeAreaOpacity: 1,
+        rightSafeAreaOpacity: 1,
         child: body,
       );
     } else if (extend) {
@@ -236,6 +296,14 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         bottomSafeAreaColor: bodyNeedsBottom ? bottomColor : null,
         leftSafeAreaColor: leftColor,
         rightSafeAreaColor: rightColor,
+        showTopSafeArea: true,
+        showBottomSafeArea: true,
+        showLeftSafeArea: true,
+        showRightSafeArea: true,
+        topSafeAreaOpacity: 1,
+        bottomSafeAreaOpacity: 1,
+        leftSafeAreaOpacity: 1,
+        rightSafeAreaOpacity: 1,
         child: body,
       );
     } else {

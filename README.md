@@ -39,7 +39,7 @@ That can lead to:
 * Smart bottom navigation bar support
 * Simulator for desktop and iOS Simulator testing
 * Enable Android, iOS, or both (at least one platform is required)
-* Optional colors for the top, bottom, left, and right safe-area regions
+* Optional colors, opacity, and visibility for the top, bottom, left, and right safe-area regions
 
 ## Installation
 
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-`adaptExistingSafeArea` is on by default, so existing Flutter `SafeArea` widgets follow the same 3-button vs gesture rules.
+`adaptExistingSafeArea` is on by default, so existing Flutter `SafeArea` widgets follow the same 3-button vs gesture rules. `SmartSafeAreaHost` also re-applies insets when the app resumes, so switching 3-button vs gesture in Android Settings takes effect when you come back.
 
 ### 3. Build a screen
 
@@ -148,20 +148,22 @@ SmartSafeAreaHost(
 
 ## Safe Area Colors
 
-Paint the system inset regions. `null` (default) leaves the background visible.
+Paint the system inset regions. `null` (default) leaves the background visible. Control each side with a color, opacity (`0`–`1`), or `show*` to hide it.
 
 ```dart
 SmartSafeAreaScaffold(
   backgroundColor: Colors.indigo,
   topSafeAreaColor: Colors.orange,
+  topSafeAreaOpacity: 0.45,
+  showTopSafeArea: true,
   bottomSafeAreaColor: Colors.deepPurple,
-  leftSafeAreaColor: Colors.teal,
-  rightSafeAreaColor: Colors.teal,
+  bottomSafeAreaOpacity: 0.6,
+  showBottomSafeArea: true,
   body: YourContent(),
 )
 ```
 
-On `auto`, the bottom color shows for 3-button navigation and stays hidden on gesture / home-indicator devices.
+Use `Colors.transparent` or opacity `0` for a fully see-through inset. On `auto`, the bottom color shows for 3-button navigation and stays hidden on gesture / home-indicator devices.
 
 ## Inset the Background Too
 
@@ -228,6 +230,8 @@ MaterialApp(
 | `adaptExistingSafeArea` | Flutter `SafeArea` uses the smart inset |
 | `enableEdgeToEdge` | Transparent system bars |
 | `topSafeAreaColor` / `bottomSafeAreaColor` / `leftSafeAreaColor` / `rightSafeAreaColor` | Colors for each inset region |
+| `showTopSafeArea` / `showBottomSafeArea` / `showLeftSafeArea` / `showRightSafeArea` | Show or hide each inset color |
+| `topSafeAreaOpacity` / `bottomSafeAreaOpacity` / `leftSafeAreaOpacity` / `rightSafeAreaOpacity` | Opacity of each inset color (`0`–`1`) |
 
 ## Read Safe Area Values Directly
 

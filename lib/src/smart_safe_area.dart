@@ -40,6 +40,14 @@ class SmartSafeArea extends StatelessWidget {
     this.bottomSafeAreaColor,
     this.leftSafeAreaColor,
     this.rightSafeAreaColor,
+    this.showTopSafeArea,
+    this.showBottomSafeArea,
+    this.showLeftSafeArea,
+    this.showRightSafeArea,
+    this.topSafeAreaOpacity,
+    this.bottomSafeAreaOpacity,
+    this.leftSafeAreaOpacity,
+    this.rightSafeAreaOpacity,
     this.keyboardAware,
     this.threeButtonNavThreshold,
     required this.child,
@@ -99,6 +107,30 @@ class SmartSafeArea extends StatelessWidget {
   /// Color of the right inset. `null` inherits from the config.
   final Color? rightSafeAreaColor;
 
+  /// Whether to paint the top inset color. `null` inherits from the config.
+  final bool? showTopSafeArea;
+
+  /// Whether to paint the bottom inset color. `null` inherits from the config.
+  final bool? showBottomSafeArea;
+
+  /// Whether to paint the left inset color. `null` inherits from the config.
+  final bool? showLeftSafeArea;
+
+  /// Whether to paint the right inset color. `null` inherits from the config.
+  final bool? showRightSafeArea;
+
+  /// Opacity of the top inset color (`0`–`1`). `null` inherits from the config.
+  final double? topSafeAreaOpacity;
+
+  /// Opacity of the bottom inset color (`0`–`1`). `null` inherits from the config.
+  final double? bottomSafeAreaOpacity;
+
+  /// Opacity of the left inset color (`0`–`1`). `null` inherits from the config.
+  final double? leftSafeAreaOpacity;
+
+  /// Opacity of the right inset color (`0`–`1`). `null` inherits from the config.
+  final double? rightSafeAreaOpacity;
+
   /// When `true`, bottom padding is at least the keyboard height.
   final bool? keyboardAware;
 
@@ -131,12 +163,32 @@ class SmartSafeArea extends StatelessWidget {
     );
 
     final padded = _consumePadding(context, insets.content, child);
+    final topFill = resolveSafeAreaFill(
+      color: topSafeAreaColor ?? inherited.topSafeAreaColor,
+      opacity: topSafeAreaOpacity ?? inherited.topSafeAreaOpacity,
+      visible: showTopSafeArea ?? inherited.showTopSafeArea,
+    );
+    final bottomFill = resolveSafeAreaFill(
+      color: bottomSafeAreaColor ?? inherited.bottomSafeAreaColor,
+      opacity: bottomSafeAreaOpacity ?? inherited.bottomSafeAreaOpacity,
+      visible: showBottomSafeArea ?? inherited.showBottomSafeArea,
+    );
+    final leftFill = resolveSafeAreaFill(
+      color: leftSafeAreaColor ?? inherited.leftSafeAreaColor,
+      opacity: leftSafeAreaOpacity ?? inherited.leftSafeAreaOpacity,
+      visible: showLeftSafeArea ?? inherited.showLeftSafeArea,
+    );
+    final rightFill = resolveSafeAreaFill(
+      color: rightSafeAreaColor ?? inherited.rightSafeAreaColor,
+      opacity: rightSafeAreaOpacity ?? inherited.rightSafeAreaOpacity,
+      visible: showRightSafeArea ?? inherited.showRightSafeArea,
+    );
     final colored = SmartSafeAreaColorBars(
       insets: insets.content,
-      top: topSafeAreaColor ?? inherited.topSafeAreaColor,
-      bottom: bottomSafeAreaColor ?? inherited.bottomSafeAreaColor,
-      left: leftSafeAreaColor ?? inherited.leftSafeAreaColor,
-      right: rightSafeAreaColor ?? inherited.rightSafeAreaColor,
+      top: topFill,
+      bottom: bottomFill,
+      left: leftFill,
+      right: rightFill,
       child: padded,
     );
 
@@ -164,10 +216,10 @@ class SmartSafeArea extends StatelessWidget {
 
     return SmartSafeAreaColorBars(
       insets: insets.content,
-      top: topSafeAreaColor ?? inherited.topSafeAreaColor,
-      bottom: bottomSafeAreaColor ?? inherited.bottomSafeAreaColor,
-      left: leftSafeAreaColor ?? inherited.leftSafeAreaColor,
-      right: rightSafeAreaColor ?? inherited.rightSafeAreaColor,
+      top: topFill,
+      bottom: bottomFill,
+      left: leftFill,
+      right: rightFill,
       child: Stack(
         fit: StackFit.expand,
         children: [

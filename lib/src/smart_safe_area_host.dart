@@ -25,7 +25,11 @@ import 'system_nav_mode.dart';
 ///
 /// Call [SmartSafeAreaHost.ensureEdgeToEdge] from `main()` on Android so the
 /// system bars start transparent before the first frame.
-class SmartSafeAreaHost extends StatelessWidget {
+///
+/// The host also re-applies edge-to-edge and rebuilds when the app resumes or
+/// window metrics change, so 3-button vs gesture insets update after the user
+/// changes system navigation in Settings.
+class SmartSafeAreaHost extends StatefulWidget {
   /// Creates an app-level smart safe-area host.
   const SmartSafeAreaHost({
     super.key,
@@ -107,30 +111,85 @@ class SmartSafeAreaHost extends StatelessWidget {
   }
 
   @override
+  State<SmartSafeAreaHost> createState() => _SmartSafeAreaHostState();
+}
+
+class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshSystemInsets();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshSystemInsets();
+    }
+  }
+
+  @override
+  void didChangeMetrics() {
+    _rebuild();
+  }
+
+  void _rebuild() {
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _refreshSystemInsets() async {
+    if (!mounted) return;
+    if (widget.config.appliesToCurrentPlatform &&
+        widget.config.enableEdgeToEdge) {
+      await SmartSafeAreaHost.ensureEdgeToEdge(
+        statusBarIconBrightness: widget.statusBarIconBrightness,
+        systemNavigationBarIconBrightness:
+            widget.systemNavigationBarIconBrightness,
+      );
+    }
+    _rebuild();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _rebuild();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final config = widget.config;
     if (!config.appliesToCurrentPlatform) {
-      return SmartSafeAreaScope(config: config, child: child);
+      return SmartSafeAreaScope(config: config, child: widget.child);
     }
 
     Widget built = SmartSafeAreaScope(
       config: config,
       child: _MediaQueryAdapter(
         config: config,
-        child: child,
+        child: widget.child,
       ),
     );
 
     if (config.enableEdgeToEdge) {
       built = AnnotatedRegion<SystemUiOverlayStyle>(
-        value: overlayStyle(
-          statusBarIconBrightness: statusBarIconBrightness,
-          systemNavigationBarIconBrightness: systemNavigationBarIconBrightness,
+        value: SmartSafeAreaHost.overlayStyle(
+          statusBarIconBrightness: widget.statusBarIconBrightness,
+          systemNavigationBarIconBrightness:
+              widget.systemNavigationBarIconBrightness,
         ),
         child: built,
       );
     }
 
-    if (showDebugOverlay) {
+    if (widget.showDebugOverlay) {
       built = _DebugOverlay(child: built);
     }
 

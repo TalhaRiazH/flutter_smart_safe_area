@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.3
+
+* Re-apply edge-to-edge and rebuild insets when the app resumes or window metrics change, so 3-button vs gesture updates after changing navigation in Settings.
+* Add `showTopSafeArea` / `showBottomSafeArea` / `showLeftSafeArea` / `showRightSafeArea` to hide inset colors.
+* Add `topSafeAreaOpacity` / `bottomSafeAreaOpacity` / `leftSafeAreaOpacity` / `rightSafeAreaOpacity` (`0`–`1`) so inset colors can be transparent.
+
 ## 0.1.2
 
 * Add `topSafeAreaColor`, `bottomSafeAreaColor`, `leftSafeAreaColor`, and `rightSafeAreaColor` to paint the system inset regions.

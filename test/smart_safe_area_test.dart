@@ -297,6 +297,52 @@ void main() {
         48,
       );
     });
+
+    testWidgets('hides a safe area color when show is false', (tester) async {
+      const topColor = Color(0xFFFF0000);
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+          child: const SmartSafeArea(
+            topSafeAreaColor: topColor,
+            showTopSafeArea: false,
+            child: Text('content'),
+          ),
+        ),
+      );
+
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is ColoredBox && widget.color == topColor,
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('applies opacity to a safe area color', (tester) async {
+      const topColor = Color(0xFFFF0000);
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+          child: const SmartSafeArea(
+            topSafeAreaColor: topColor,
+            topSafeAreaOpacity: 0.5,
+            child: Text('content'),
+          ),
+        ),
+      );
+
+      final topBox = tester.widget<ColoredBox>(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is ColoredBox &&
+              widget.color.r == 1 &&
+              widget.color.g == 0 &&
+              widget.color.b == 0,
+        ),
+      );
+      expect(topBox.color.a, closeTo(0.5, 0.01));
+    });
   });
 
   group('SmartSafeAreaHost', () {
@@ -355,6 +401,47 @@ void main() {
       );
 
       expect(padding.bottom, 48);
+    });
+
+    testWidgets('rebuilds after resume so system-nav changes are applied',
+        (tester) async {
+      late double bottom;
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+                padding: const EdgeInsets.only(top: 47, bottom: 48),
+              ),
+              child: SmartSafeAreaHost(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+          home: Builder(
+            builder: (context) {
+              bottom = SmartSafeAreaInsets.of(context).contentBottom;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(bottom, 48);
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pump();
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.byType(SmartSafeAreaHost), findsOneWidget);
+      expect(bottom, 48);
     });
   });
 

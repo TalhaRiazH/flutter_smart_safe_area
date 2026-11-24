@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
+const _navBarColor = Color(0xFF12263A);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SmartSafeAreaHost.ensureEdgeToEdge();
@@ -22,8 +24,8 @@ class TestSafeAreaApp extends StatelessWidget {
         config: const SmartSafeAreaConfig(
           extendBackground: true,
           bottomBehavior: BottomSafeAreaBehavior.auto,
-          topSafeAreaColor: Color(0xFFFF8C42),
-          bottomSafeAreaColor: Color(0xFF7B61FF),
+          bottomSafeAreaColor: _navBarColor,
+          bottomSafeAreaOpacity: 1,
         ),
       ),
       home: const _HomeScreen(),
@@ -55,8 +57,9 @@ class _HomeScreen extends StatelessWidget {
       extendBackground: true,
       bottomBehavior: BottomSafeAreaBehavior.auto,
       backgroundColor: const Color(0xFF1B4F72),
-      topSafeAreaColor: const Color(0xFFFF8C42),
-      bottomSafeAreaColor: const Color(0xFF7B61FF),
+      bottomSafeAreaColor: _navBarColor,
+      showBottomSafeArea: true,
+      bottomSafeAreaOpacity: 1,
       bottomNavigationBar: const _DemoTabBar(),
       body: ListView.separated(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -97,7 +100,7 @@ class _DemoTabBar extends StatelessWidget {
     final fontSize = (iconSize * 0.42).clamp(12.0, 16.0);
 
     return ColoredBox(
-      color: const Color(0xFF12263A),
+      color: _navBarColor,
       child: SizedBox(
         height: barHeight,
         child: Row(

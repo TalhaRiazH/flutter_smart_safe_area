@@ -34,10 +34,22 @@ class SmartSafeAreaConfig {
     this.bottomSafeAreaColor,
     this.leftSafeAreaColor,
     this.rightSafeAreaColor,
-  }) : assert(
+    this.showTopSafeArea = true,
+    this.showBottomSafeArea = true,
+    this.showLeftSafeArea = true,
+    this.showRightSafeArea = true,
+    this.topSafeAreaOpacity = 1,
+    this.bottomSafeAreaOpacity = 1,
+    this.leftSafeAreaOpacity = 1,
+    this.rightSafeAreaOpacity = 1,
+  })  : assert(
           applyOnAndroid || applyOnIOS,
           'At least one of applyOnAndroid or applyOnIOS must be true.',
-        );
+        ),
+        assert(topSafeAreaOpacity >= 0 && topSafeAreaOpacity <= 1),
+        assert(bottomSafeAreaOpacity >= 0 && bottomSafeAreaOpacity <= 1),
+        assert(leftSafeAreaOpacity >= 0 && leftSafeAreaOpacity <= 1),
+        assert(rightSafeAreaOpacity >= 0 && rightSafeAreaOpacity <= 1);
 
   /// Package defaults used when no [SmartSafeAreaScope] is above the widget.
   static const SmartSafeAreaConfig defaults = SmartSafeAreaConfig();
@@ -139,6 +151,30 @@ class SmartSafeAreaConfig {
   /// Color painted in the right inset. `null` leaves the background visible.
   final Color? rightSafeAreaColor;
 
+  /// Whether to paint [topSafeAreaColor]. Defaults to `true`.
+  final bool showTopSafeArea;
+
+  /// Whether to paint [bottomSafeAreaColor]. Defaults to `true`.
+  final bool showBottomSafeArea;
+
+  /// Whether to paint [leftSafeAreaColor]. Defaults to `true`.
+  final bool showLeftSafeArea;
+
+  /// Whether to paint [rightSafeAreaColor]. Defaults to `true`.
+  final bool showRightSafeArea;
+
+  /// Opacity of the top inset color, from `0` (invisible) to `1` (solid).
+  final double topSafeAreaOpacity;
+
+  /// Opacity of the bottom inset color, from `0` (invisible) to `1` (solid).
+  final double bottomSafeAreaOpacity;
+
+  /// Opacity of the left inset color, from `0` (invisible) to `1` (solid).
+  final double leftSafeAreaOpacity;
+
+  /// Opacity of the right inset color, from `0` (invisible) to `1` (solid).
+  final double rightSafeAreaOpacity;
+
   /// Returns a copy with the given fields replaced.
   SmartSafeAreaConfig copyWith({
     BottomSafeAreaBehavior? bottomBehavior,
@@ -165,6 +201,14 @@ class SmartSafeAreaConfig {
     bool clearLeftSafeAreaColor = false,
     Color? rightSafeAreaColor,
     bool clearRightSafeAreaColor = false,
+    bool? showTopSafeArea,
+    bool? showBottomSafeArea,
+    bool? showLeftSafeArea,
+    bool? showRightSafeArea,
+    double? topSafeAreaOpacity,
+    double? bottomSafeAreaOpacity,
+    double? leftSafeAreaOpacity,
+    double? rightSafeAreaOpacity,
   }) {
     return SmartSafeAreaConfig(
       bottomBehavior: bottomBehavior ?? this.bottomBehavior,
@@ -197,6 +241,15 @@ class SmartSafeAreaConfig {
       rightSafeAreaColor: clearRightSafeAreaColor
           ? null
           : (rightSafeAreaColor ?? this.rightSafeAreaColor),
+      showTopSafeArea: showTopSafeArea ?? this.showTopSafeArea,
+      showBottomSafeArea: showBottomSafeArea ?? this.showBottomSafeArea,
+      showLeftSafeArea: showLeftSafeArea ?? this.showLeftSafeArea,
+      showRightSafeArea: showRightSafeArea ?? this.showRightSafeArea,
+      topSafeAreaOpacity: topSafeAreaOpacity ?? this.topSafeAreaOpacity,
+      bottomSafeAreaOpacity:
+          bottomSafeAreaOpacity ?? this.bottomSafeAreaOpacity,
+      leftSafeAreaOpacity: leftSafeAreaOpacity ?? this.leftSafeAreaOpacity,
+      rightSafeAreaOpacity: rightSafeAreaOpacity ?? this.rightSafeAreaOpacity,
     );
   }
 
@@ -222,7 +275,15 @@ class SmartSafeAreaConfig {
         other.topSafeAreaColor == topSafeAreaColor &&
         other.bottomSafeAreaColor == bottomSafeAreaColor &&
         other.leftSafeAreaColor == leftSafeAreaColor &&
-        other.rightSafeAreaColor == rightSafeAreaColor;
+        other.rightSafeAreaColor == rightSafeAreaColor &&
+        other.showTopSafeArea == showTopSafeArea &&
+        other.showBottomSafeArea == showBottomSafeArea &&
+        other.showLeftSafeArea == showLeftSafeArea &&
+        other.showRightSafeArea == showRightSafeArea &&
+        other.topSafeAreaOpacity == topSafeAreaOpacity &&
+        other.bottomSafeAreaOpacity == bottomSafeAreaOpacity &&
+        other.leftSafeAreaOpacity == leftSafeAreaOpacity &&
+        other.rightSafeAreaOpacity == rightSafeAreaOpacity;
   }
 
   @override
@@ -247,6 +308,14 @@ class SmartSafeAreaConfig {
           bottomSafeAreaColor,
           leftSafeAreaColor,
           rightSafeAreaColor,
+          showTopSafeArea,
+          showBottomSafeArea,
+          showLeftSafeArea,
+          showRightSafeArea,
+          topSafeAreaOpacity,
+          bottomSafeAreaOpacity,
+          leftSafeAreaOpacity,
+          rightSafeAreaOpacity,
         ),
       );
 }
