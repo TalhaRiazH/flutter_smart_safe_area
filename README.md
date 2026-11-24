@@ -405,13 +405,9 @@ When the user changes navigation in phone Settings and comes back to your app, i
 | `SmartSafeAreaConfig` | App-wide settings. |
 | `SmartSafeAreaSimulator` | Pretend to be a 3-button or gesture phone while testing. |
 
-## Example app
+## Author
 
-See the [example app](https://github.com/TalhaRiazH/flutter_smart_safe_area/tree/main/example) on GitHub: a colorful list, a tab bar, and colored top and bottom areas.
-
-## Help and bugs
-
-Found a problem? Open an issue at [TalhaRiazH/flutter_smart_safe_area](https://github.com/TalhaRiazH/flutter_smart_safe_area/issues).
+Talha Riaz
 
 ## License
 

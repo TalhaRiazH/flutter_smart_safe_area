@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.10
+
+* List Talha Riaz as the package author.
+
 ## 0.1.9
 
 * Apply status-bar and bottom-inset colors from `SmartSafeAreaHost` to every screen.
