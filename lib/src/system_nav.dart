@@ -3,6 +3,7 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/widgets.dart';
 
+import 'smart_safe_area_raw_padding.dart';
 import 'smart_safe_area_scope.dart';
 import 'smart_safe_area_simulation_scope.dart';
 import 'system_nav_mode.dart';
@@ -28,6 +29,8 @@ abstract final class SystemNav {
   /// This is the physical inset (3-button bar **or** home indicator), not the
   /// content inset. Use [contentBottomInset] when padding widgets.
   static double rawBottomInset(BuildContext context) {
+    final captured = SmartSafeAreaRawPadding.maybeOf(context);
+    if (captured != null) return captured.bottom;
     final mqBottom = MediaQuery.viewPaddingOf(context).bottom;
     if (SmartSafeAreaSimulationScope.lockedOf(context)) {
       return mqBottom;

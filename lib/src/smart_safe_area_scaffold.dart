@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'bottom_safe_area_behavior.dart';
 import 'smart_safe_area.dart';
 import 'smart_safe_area_color_bars.dart';
+import 'smart_safe_area_config.dart';
 import 'smart_safe_area_insets.dart';
 import 'smart_safe_area_scope.dart';
+import 'smart_safe_area_screen_style.dart';
 import 'smart_system_nav_bar.dart';
 
 /// A [Scaffold] that treats the background and the content separately.
@@ -234,6 +236,31 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     );
     final hasBottomTint =
         (bottomSafeAreaColor ?? inherited.bottomSafeAreaColor) != null;
+    final hostPaints = SmartSafeAreaScreenScope.maybeOf(context) != null;
+    final screenConfig = inherited.copyWith(
+      bottomBehavior: behavior,
+      extendBackground: extend,
+      applyTop: applyTop,
+      applyBottom: applyBottom,
+      applyLeft: left,
+      applyRight: right,
+      minimum: minimum,
+      extraPadding: extra,
+      keyboardAware: keyboardAware,
+      threeButtonNavThreshold: threeButtonNavThreshold,
+      topSafeAreaColor: topSafeAreaColor,
+      bottomSafeAreaColor: bottomSafeAreaColor,
+      leftSafeAreaColor: leftSafeAreaColor,
+      rightSafeAreaColor: rightSafeAreaColor,
+      showTopSafeArea: showTop,
+      showBottomSafeArea: showBottom,
+      showLeftSafeArea: showLeftSafeArea,
+      showRightSafeArea: showRightSafeArea,
+      topSafeAreaOpacity: topSafeAreaOpacity,
+      bottomSafeAreaOpacity: bottomSafeAreaOpacity,
+      leftSafeAreaOpacity: leftSafeAreaOpacity,
+      rightSafeAreaOpacity: rightSafeAreaOpacity,
+    );
 
     final bottomIsTranslucent = safeAreaFillIsTranslucent(bottomColor);
     final topIsTranslucent = safeAreaFillIsTranslucent(topColor);
@@ -287,6 +314,7 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         bottomSafeAreaOpacity: 1,
         leftSafeAreaOpacity: 1,
         rightSafeAreaOpacity: 1,
+        paintColorBars: !hostPaints,
         child: body,
       );
     } else if (extend) {
@@ -312,6 +340,7 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         bottomSafeAreaOpacity: 1,
         leftSafeAreaOpacity: 1,
         rightSafeAreaOpacity: 1,
+        paintColorBars: !hostPaints,
         child: body,
       );
     } else {
@@ -361,7 +390,7 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     );
 
     if (extend || _hasCustomBackground) {
-      return scaffold;
+      return SmartSafeAreaScreenStyle(config: screenConfig, child: scaffold);
     }
 
     final insets = SmartSafeAreaInsets.of(
@@ -381,23 +410,26 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         backgroundColor ??
         const Color(0xFF000000);
 
-    return SmartSafeAreaColorBars(
-      insets: insets.content,
-      top: topColor,
-      bottom: bottomColor,
-      left: leftColor,
-      right: rightColor,
-      child: ColoredBox(
-        color: letterbox,
-        child: Padding(
-          padding: insets.content,
-          child: MediaQuery.removePadding(
-            context: context,
-            removeTop: insets.content.top > 0,
-            removeBottom: insets.content.bottom > 0,
-            removeLeft: insets.content.left > 0,
-            removeRight: insets.content.right > 0,
-            child: scaffold,
+    return SmartSafeAreaScreenStyle(
+      config: screenConfig,
+      child: SmartSafeAreaColorBars(
+        insets: insets.content,
+        top: hostPaints ? null : topColor,
+        bottom: hostPaints ? null : bottomColor,
+        left: hostPaints ? null : leftColor,
+        right: hostPaints ? null : rightColor,
+        child: ColoredBox(
+          color: letterbox,
+          child: Padding(
+            padding: insets.content,
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: insets.content.top > 0,
+              removeBottom: insets.content.bottom > 0,
+              removeLeft: insets.content.left > 0,
+              removeRight: insets.content.right > 0,
+              child: scaffold,
+            ),
           ),
         ),
       ),

@@ -81,6 +81,39 @@ class MyApp extends StatelessWidget {
 }
 ```
 
+### Set colors once for the whole app
+
+Put the status-bar and bottom-inset colors on the host. Every screen uses them. You do not wrap each page.
+
+```dart
+MaterialApp(
+  builder: SmartSafeAreaHost.materialBuilder(
+    config: const SmartSafeAreaConfig(
+      topSafeAreaColor: Colors.orange,
+      topSafeAreaOpacity: 0.45,
+      bottomSafeAreaColor: Color(0xFF12263A),
+      bottomSafeAreaOpacity: 0.72,
+    ),
+  ),
+  home: const HomeScreen(),
+)
+```
+
+`bottomSafeAreaColor` paints the strip behind the 3 system buttons. Give your tab bar that same color and they look like one bar. On a gesture phone that strip stays hidden.
+
+### One screen can be different
+
+Use `SmartSafeAreaScaffold` only on the screen that should break the app-wide style. The other screens stay on the host config.
+
+```dart
+SmartSafeAreaScaffold(
+  topSafeAreaColor: Colors.green, // this screen only
+  body: const Text('This page has its own status-bar color.'),
+)
+```
+
+When you leave that screen, the app-wide colors come back.
+
 **That's it for content that already reads the safe area.** Keep your normal `Scaffold`. You do not wrap every screen with `SmartSafeAreaScaffold`.
 
 ```dart
@@ -101,22 +134,18 @@ class HomeScreen extends StatelessWidget {
 }
 ```
 
-After Step 2, these follow `auto`:
+After Step 2, these follow `auto` on every screen:
 
 * Flutter's `SafeArea`
 * a `ListView` that does not set its own `padding`
-* Material 3 `NavigationBar` (it uses `SafeArea`)
+* Material 3 `NavigationBar`
+* Material `BottomNavigationBar`
 
-These do **not** follow `auto` by themselves:
+A custom tab bar does **not** follow `auto` by itself. `Scaffold` pins it to the bottom edge. Put that bar in `SmartSafeAreaScaffold`, or wrap the bar with `SmartSystemNavBar`.
 
-* Material `BottomNavigationBar` — it reads `viewPadding`, so a gesture phone still lifts the bar
-* a custom tab bar — `Scaffold` pins it to the bottom edge
+### Optional — `SmartSafeAreaScaffold` for one screen
 
-For those, put the bar in `SmartSafeAreaScaffold` (or wrap it with `SmartSystemNavBar`). The package then lifts it only on 3-button phones, once.
-
-### Optional — `SmartSafeAreaScaffold` only for extra options
-
-Use `SmartSafeAreaScaffold` **only** when you want something a normal `Scaffold` does not do: a color behind the status bar or the 3 buttons, a see-through color, hiding that color, or keeping the background inside the safe area too.
+Set colors on the host when every screen should look the same. Use `SmartSafeAreaScaffold` when **one screen** should look different, or when you want the background to stay inside the safe area too (`extendBackground: false`).
 
 ```dart
 SmartSafeAreaScaffold(
@@ -129,7 +158,7 @@ SmartSafeAreaScaffold(
 )
 ```
 
-You do not put this on every screen. One screen can use it, and the rest can stay on `Scaffold`.
+You do not put this on every screen. This screen uses its own colors and bottom behavior. Every other screen keeps the host settings.
 
 ### Android only: one extra line (recommended)
 

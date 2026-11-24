@@ -4,6 +4,10 @@
 /// **gesture / home-indicator** navigation, then insets only the content that
 /// needs it. Backgrounds stay edge-to-edge by default.
 ///
+/// Set status-bar and bottom-inset colors once on [SmartSafeAreaHost]. Wrap a
+/// single screen in [SmartSafeAreaScaffold] only when that screen should use
+/// different colors or bottom behavior.
+///
 /// ```dart
 /// Future<void> main() async {
 ///   WidgetsFlutterBinding.ensureInitialized();

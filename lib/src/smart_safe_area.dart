@@ -50,6 +50,7 @@ class SmartSafeArea extends StatelessWidget {
     this.rightSafeAreaOpacity,
     this.keyboardAware,
     this.threeButtonNavThreshold,
+    this.paintColorBars = true,
     required this.child,
   });
 
@@ -140,6 +141,10 @@ class SmartSafeArea extends StatelessWidget {
   /// Screen content — buttons, text, images, lists — that should be inset.
   final Widget child;
 
+  /// When `false`, padding is still applied but the color bars are left to
+  /// the app-wide host.
+  final bool paintColorBars;
+
   bool get _hasBackground =>
       background != null ||
       backgroundColor != null ||
@@ -196,15 +201,25 @@ class SmartSafeArea extends StatelessWidget {
       left: leftFill,
       right: rightFill,
     );
-    final padded = _consumePadding(context, contentPadding, child);
-    final colored = SmartSafeAreaColorBars(
-      insets: overlayInsets,
-      top: topFill,
-      bottom: bottomFill,
-      left: leftFill,
-      right: rightFill,
-      child: padded,
+    final padded = _consumePadding(
+      context,
+      contentPadding,
+      child,
+      top: top ?? inherited.applyTop,
+      bottom: bottom ?? inherited.applyBottom,
+      left: left ?? inherited.applyLeft,
+      right: right ?? inherited.applyRight,
     );
+    final colored = paintColorBars
+        ? SmartSafeAreaColorBars(
+            insets: overlayInsets,
+            top: topFill,
+            bottom: bottomFill,
+            left: leftFill,
+            right: rightFill,
+            child: padded,
+          )
+        : padded;
 
     if (!_hasBackground) {
       return colored;
@@ -245,7 +260,15 @@ class SmartSafeArea extends StatelessWidget {
               children: [
                 Positioned.fill(child: bg),
                 Positioned.fill(
-                  child: _consumePadding(context, EdgeInsets.zero, child),
+                  child: _consumePadding(
+                    context,
+                    EdgeInsets.zero,
+                    child,
+                    top: false,
+                    bottom: false,
+                    left: false,
+                    right: false,
+                  ),
                 ),
               ],
             ),
@@ -269,19 +292,21 @@ class SmartSafeArea extends StatelessWidget {
   Widget _consumePadding(
     BuildContext context,
     EdgeInsets padding,
-    Widget child,
-  ) {
-    if (padding == EdgeInsets.zero) return child;
-    return Padding(
-      padding: padding,
-      child: MediaQuery.removePadding(
-        context: context,
-        removeTop: padding.top > 0,
-        removeBottom: padding.bottom > 0,
-        removeLeft: padding.left > 0,
-        removeRight: padding.right > 0,
-        child: child,
-      ),
+    Widget child, {
+    required bool top,
+    required bool bottom,
+    required bool left,
+    required bool right,
+  }) {
+    final consumed = MediaQuery.removePadding(
+      context: context,
+      removeTop: top,
+      removeBottom: bottom,
+      removeLeft: left,
+      removeRight: right,
+      child: child,
     );
+    if (padding == EdgeInsets.zero) return consumed;
+    return Padding(padding: padding, child: consumed);
   }
 }

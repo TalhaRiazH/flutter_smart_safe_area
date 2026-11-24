@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.9
+
+* Apply status-bar and bottom-inset colors from `SmartSafeAreaHost` to every screen.
+* A `SmartSafeAreaScaffold` replaces those colors and that screen's bottom inset only while the screen is visible.
+* Material `BottomNavigationBar` follows `auto` from the host, without wrapping each page.
+
 ## 0.1.8
 
 * Stop replacing the navigator when the system inset changes, so routes and screen state stay put.

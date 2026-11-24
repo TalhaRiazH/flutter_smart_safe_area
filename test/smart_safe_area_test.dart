@@ -502,6 +502,155 @@ void main() {
       expect(contentBottom, 0);
     });
 
+    testWidgets('paints app-wide colors and lets one screen override them',
+        (tester) async {
+      const appColor = Color(0xFFFF0000);
+      const screenColor = Color(0xFF00FF00);
+      final navigator = GlobalKey<NavigatorState>();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigator,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewPadding: const EdgeInsets.only(top: 40, bottom: 48),
+                padding: const EdgeInsets.only(top: 40, bottom: 48),
+              ),
+              child: SmartSafeAreaHost(
+                config: const SmartSafeAreaConfig(topSafeAreaColor: appColor),
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+          home: const Scaffold(body: Text('home')),
+        ),
+      );
+
+      expect(_colorBarHeight(tester, appColor), 40);
+
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (context) => const SmartSafeAreaScaffold(
+            topSafeAreaColor: screenColor,
+            body: Text('other'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(_colorBarHeight(tester, screenColor), 40);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is ColoredBox && widget.color == appColor,
+        ),
+        findsNothing,
+      );
+
+      navigator.currentState!.pop();
+      await tester.pumpAndSettle();
+
+      expect(_colorBarHeight(tester, appColor), 40);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is ColoredBox && widget.color == screenColor,
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('lifts BottomNavigationBar only for 3-button insets',
+        (tester) async {
+      Future<double> barHeight(double bottom) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  viewPadding: EdgeInsets.only(bottom: bottom),
+                  padding: EdgeInsets.only(bottom: bottom),
+                ),
+                child: SmartSafeAreaHost(
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              );
+            },
+            home: Scaffold(
+              body: const SizedBox.shrink(),
+              bottomNavigationBar: BottomNavigationBar(
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.settings),
+                    label: 'Settings',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+        return tester.getSize(find.byType(BottomNavigationBar)).height;
+      }
+
+      final threeButton = await barHeight(48);
+      final gesture = await barHeight(34);
+      expect(threeButton - gesture, 48);
+    });
+
+    testWidgets('one screen can turn the bottom inset off', (tester) async {
+      final navigator = GlobalKey<NavigatorState>();
+      const items = [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigator,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewPadding: const EdgeInsets.only(bottom: 48),
+                padding: const EdgeInsets.only(bottom: 48),
+              ),
+              child: SmartSafeAreaHost(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+          home: Scaffold(
+            body: const Text('home'),
+            bottomNavigationBar: BottomNavigationBar(items: items),
+          ),
+        ),
+      );
+      final homeHeight =
+          tester.getSize(find.byType(BottomNavigationBar)).height;
+
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (context) => SmartSafeAreaScaffold(
+            bottomBehavior: BottomSafeAreaBehavior.never,
+            body: const Text('other'),
+            bottomNavigationBar: BottomNavigationBar(items: items),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final screenBar = find.descendant(
+        of: find.ancestor(
+          of: find.text('other'),
+          matching: find.byType(Scaffold),
+        ),
+        matching: find.byType(BottomNavigationBar),
+      );
+      expect(homeHeight - tester.getSize(screenBar).height, 48);
+    });
+
     testWidgets('keeps screen state when the bottom inset changes',
         (tester) async {
       final padding = ValueNotifier<EdgeInsets>(
@@ -763,6 +912,14 @@ void main() {
       expect(content, 48);
     });
   });
+}
+
+double? _colorBarHeight(WidgetTester tester, Color color) {
+  final bars = find.byWidgetPredicate(
+    (widget) => widget is ColoredBox && widget.color == color,
+  );
+  if (bars.evaluate().isEmpty) return null;
+  return tester.getSize(bars.first).height;
 }
 
 class _Counter extends StatefulWidget {

@@ -4,9 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'smart_safe_area_color_bars.dart';
 import 'smart_safe_area_config.dart';
 import 'smart_safe_area_insets.dart';
+import 'smart_safe_area_raw_padding.dart';
 import 'smart_safe_area_scope.dart';
+import 'smart_safe_area_screen_style.dart';
 import 'smart_safe_area_simulation_scope.dart';
 import 'system_nav.dart';
 import 'system_nav_mode.dart';
@@ -118,19 +121,32 @@ class SmartSafeAreaHost extends StatefulWidget {
 class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
     with WidgetsBindingObserver {
   EdgeInsets? _appliedLivePadding;
+  final SmartSafeAreaScreenController _screens =
+      SmartSafeAreaScreenController();
 
   @override
   void initState() {
     super.initState();
+    _screens.addListener(_onScreenStyle);
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshSystemInsets();
     });
   }
 
+  void _onScreenStyle() {
+    // Registration can happen while a route is disposing. Apply it on the
+    // next frame so the host never calls setState during that build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
   @override
   void dispose() {
+    _screens.removeListener(_onScreenStyle);
     WidgetsBinding.instance.removeObserver(this);
+    _screens.dispose();
     super.dispose();
   }
 
@@ -178,11 +194,15 @@ class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
       return SmartSafeAreaScope(config: config, child: widget.child);
     }
 
-    Widget built = SmartSafeAreaScope(
-      config: config,
-      child: _MediaQueryAdapter(
+    Widget built = SmartSafeAreaScreenScope(
+      controller: _screens,
+      child: SmartSafeAreaScope(
         config: config,
-        child: widget.child,
+        child: _MediaQueryAdapter(
+          config: config,
+          screenStyle: _screens,
+          child: widget.child,
+        ),
       ),
     );
 
@@ -208,10 +228,12 @@ class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
 class _MediaQueryAdapter extends StatelessWidget {
   const _MediaQueryAdapter({
     required this.config,
+    required this.screenStyle,
     required this.child,
   });
 
   final SmartSafeAreaConfig config;
+  final SmartSafeAreaScreenController screenStyle;
   final Widget child;
 
   @override
@@ -262,11 +284,87 @@ class _MediaQueryAdapter extends StatelessWidget {
                 ? smartBottom
                 : math.max(padding.bottom, viewPadding.bottom),
           );
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(padding: nextPadding),
-            child: child,
+          final smartViewPadding = config.adaptExistingSafeArea
+              ? viewPadding.copyWith(bottom: smartBottom)
+              : viewPadding;
+          return SmartSafeAreaRawPadding(
+            padding: viewPadding,
+            child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                padding: nextPadding,
+                viewPadding: smartViewPadding,
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  child,
+                  _HostColorOverlay(
+                    fallback: config,
+                    screenStyle: screenStyle,
+                  ),
+                ],
+              ),
+            ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _HostColorOverlay extends StatelessWidget {
+  const _HostColorOverlay({
+    required this.fallback,
+    required this.screenStyle,
+  });
+
+  final SmartSafeAreaConfig fallback;
+  final SmartSafeAreaScreenController screenStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final config = screenStyle.active ?? fallback;
+    final insets = SmartSafeAreaInsets.of(
+      context,
+      config: config,
+      extraPadding: EdgeInsets.zero,
+      minimum: EdgeInsets.zero,
+      keyboardAware: false,
+    );
+    final top = resolveSafeAreaFill(
+      color: config.topSafeAreaColor,
+      opacity: config.topSafeAreaOpacity,
+      visible: config.showTopSafeArea,
+    );
+    final bottom = resolveSafeAreaFill(
+      color: config.bottomSafeAreaColor,
+      opacity: config.bottomSafeAreaOpacity,
+      visible: config.showBottomSafeArea,
+    );
+    final left = resolveSafeAreaFill(
+      color: config.leftSafeAreaColor,
+      opacity: config.leftSafeAreaOpacity,
+      visible: config.showLeftSafeArea,
+    );
+    final right = resolveSafeAreaFill(
+      color: config.rightSafeAreaColor,
+      opacity: config.rightSafeAreaOpacity,
+      visible: config.showRightSafeArea,
+    );
+    return IgnorePointer(
+      child: SmartSafeAreaColorBars(
+        insets: overlayInsetsForFills(
+          insets.content,
+          top: top,
+          bottom: bottom,
+          left: left,
+          right: right,
+        ),
+        top: top,
+        bottom: bottom,
+        left: left,
+        right: right,
+        child: const SizedBox.expand(),
       ),
     );
   }
