@@ -235,9 +235,17 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     final hasBottomTint =
         (bottomSafeAreaColor ?? inherited.bottomSafeAreaColor) != null;
 
-    final bodyNeedsTop = applyTop && (appBar == null || extendBodyBehindAppBar);
+    final bottomIsTranslucent = safeAreaFillIsTranslucent(bottomColor);
+    final topIsTranslucent = safeAreaFillIsTranslucent(topColor);
+    final effectiveExtendBody =
+        extendBody || (bottomNavigationBar != null && bottomIsTranslucent);
+    final effectiveExtendBodyBehindAppBar =
+        extendBodyBehindAppBar || (appBar != null && topIsTranslucent);
+
+    final bodyNeedsTop =
+        applyTop && (appBar == null || effectiveExtendBodyBehindAppBar);
     final bodyNeedsBottom =
-        applyBottom && (bottomNavigationBar == null || extendBody);
+        applyBottom && (bottomNavigationBar == null || effectiveExtendBody);
 
     Widget? nav = bottomNavigationBar;
     if (nav != null && wrapBottomNavigationBar) {
@@ -348,8 +356,8 @@ class SmartSafeAreaScaffold extends StatelessWidget {
       drawer: drawer,
       endDrawer: endDrawer,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      extendBody: extendBody,
-      extendBodyBehindAppBar: extendBodyBehindAppBar,
+      extendBody: effectiveExtendBody,
+      extendBodyBehindAppBar: effectiveExtendBodyBehindAppBar,
     );
 
     if (extend || _hasCustomBackground) {

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'smart_safe_area_config.dart';
 import 'smart_safe_area_insets.dart';
 import 'smart_safe_area_scope.dart';
+import 'smart_safe_area_simulation_scope.dart';
 import 'system_nav.dart';
 import 'system_nav_mode.dart';
 
@@ -140,11 +141,8 @@ class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
 
   @override
   void didChangeMetrics() {
-    _rebuild();
-  }
-
-  void _rebuild() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    setState(() {});
   }
 
   Future<void> _refreshSystemInsets() async {
@@ -157,9 +155,14 @@ class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
             widget.systemNavigationBarIconBrightness,
       );
     }
-    _rebuild();
+    if (!mounted) return;
+    setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _rebuild();
+      if (!mounted) return;
+      setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
     });
   }
 
@@ -208,32 +211,59 @@ class _MediaQueryAdapter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    final padding = mq.padding;
-    final viewPadding = mq.viewPadding;
-
-    final smartBottom = SmartSafeAreaInsets.of(
-      context,
-      config: config,
-      extraPadding: EdgeInsets.zero,
-      minimum: EdgeInsets.zero,
-      keyboardAware: false,
-    ).contentBottom;
-
-    final nextPadding = padding.copyWith(
-      top: math.max(padding.top, viewPadding.top),
-      left: math.max(padding.left, viewPadding.left),
-      right: math.max(padding.right, viewPadding.right),
-      bottom: config.adaptExistingSafeArea
-          ? smartBottom
-          : math.max(padding.bottom, viewPadding.bottom),
-    );
-
-    if (nextPadding == padding) return child;
+    var mq = MediaQuery.of(context);
+    if (!SmartSafeAreaSimulationScope.lockedOf(context)) {
+      final live = SystemNav.liveViewPadding(context);
+      if (live != null && (live.bottom > 0 || live.top > 0)) {
+        final staleBottom = (live.bottom - mq.viewPadding.bottom).abs() > 0.5;
+        final staleTop = (live.top - mq.viewPadding.top).abs() > 0.5;
+        if (staleBottom || staleTop) {
+          mq = mq.copyWith(
+            viewPadding: live,
+            padding: mq.padding.copyWith(
+              top: live.top,
+              left: live.left,
+              right: live.right,
+              bottom: live.bottom,
+            ),
+          );
+        }
+      }
+    }
 
     return MediaQuery(
-      data: mq.copyWith(padding: nextPadding),
-      child: child,
+      data: mq,
+      child: Builder(
+        builder: (context) {
+          final padding = MediaQuery.paddingOf(context);
+          final viewPadding = MediaQuery.viewPaddingOf(context);
+          final insets = SmartSafeAreaInsets.of(
+            context,
+            config: config,
+            extraPadding: EdgeInsets.zero,
+            minimum: EdgeInsets.zero,
+            keyboardAware: false,
+          );
+          final smartBottom = insets.contentBottom;
+          final nextPadding = padding.copyWith(
+            top: math.max(padding.top, viewPadding.top),
+            left: math.max(padding.left, viewPadding.left),
+            right: math.max(padding.right, viewPadding.right),
+            bottom: config.adaptExistingSafeArea
+                ? smartBottom
+                : math.max(padding.bottom, viewPadding.bottom),
+          );
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(padding: nextPadding),
+            child: KeyedSubtree(
+              key: ValueKey(
+                'ssa-${insets.navMode.name}-${insets.rawBottom.toStringAsFixed(1)}',
+              ),
+              child: child,
+            ),
+          );
+        },
+      ),
     );
   }
 }

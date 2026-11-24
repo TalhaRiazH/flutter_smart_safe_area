@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 const _navBarColor = Color(0xFF12263A);
+const _topSafeColor = Color(0xFFFF8C42);
+const _topOpacity = 0.45;
+const _bottomOpacity = 0.72;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SmartSafeAreaHost.ensureEdgeToEdge();
   runApp(const TestSafeAreaApp());
+}
+
+double _navBarHeight(BuildContext context) {
+  return (MediaQuery.sizeOf(context).height * 0.09).clamp(72.0, 104.0);
 }
 
 class TestSafeAreaApp extends StatelessWidget {
@@ -24,8 +31,10 @@ class TestSafeAreaApp extends StatelessWidget {
         config: const SmartSafeAreaConfig(
           extendBackground: true,
           bottomBehavior: BottomSafeAreaBehavior.auto,
+          topSafeAreaColor: _topSafeColor,
+          topSafeAreaOpacity: _topOpacity,
           bottomSafeAreaColor: _navBarColor,
-          bottomSafeAreaOpacity: 1,
+          bottomSafeAreaOpacity: _bottomOpacity,
         ),
       ),
       home: const _HomeScreen(),
@@ -49,20 +58,34 @@ class _HomeScreen extends StatelessWidget {
     ('Teal', Color(0xFF00A896)),
     ('Indigo', Color(0xFF3D5A80)),
     ('Peach', Color(0xFFFFA69E)),
+    ('Amber', Color(0xFFFFC300)),
+    ('Aqua', Color(0xFF48CAE4)),
+    ('Plum', Color(0xFF9B5DE5)),
+    ('Leaf', Color(0xFF43AA8B)),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final mediaPadding = MediaQuery.paddingOf(context);
+
     return SmartSafeAreaScaffold(
       extendBackground: true,
       bottomBehavior: BottomSafeAreaBehavior.auto,
       backgroundColor: const Color(0xFF1B4F72),
+      topSafeAreaColor: _topSafeColor,
+      topSafeAreaOpacity: _topOpacity,
+      showTopSafeArea: true,
       bottomSafeAreaColor: _navBarColor,
+      bottomSafeAreaOpacity: _bottomOpacity,
       showBottomSafeArea: true,
-      bottomSafeAreaOpacity: 1,
       bottomNavigationBar: const _DemoTabBar(),
       body: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        padding: EdgeInsets.fromLTRB(
+          16,
+          mediaPadding.top + 8,
+          16,
+          mediaPadding.bottom + _navBarHeight(context) + 16,
+        ),
         itemCount: _tiles.length,
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
@@ -95,12 +118,12 @@ class _DemoTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final barHeight = (size.height * 0.09).clamp(72.0, 104.0);
+    final barHeight = _navBarHeight(context);
     final iconSize = (size.shortestSide * 0.07).clamp(28.0, 36.0);
     final fontSize = (iconSize * 0.42).clamp(12.0, 16.0);
 
     return ColoredBox(
-      color: _navBarColor,
+      color: _navBarColor.withValues(alpha: _bottomOpacity),
       child: SizedBox(
         height: barHeight,
         child: Row(

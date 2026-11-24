@@ -162,7 +162,6 @@ class SmartSafeArea extends StatelessWidget {
       threeButtonNavThreshold: threeButtonNavThreshold,
     );
 
-    final padded = _consumePadding(context, insets.content, child);
     final topFill = resolveSafeAreaFill(
       color: topSafeAreaColor ?? inherited.topSafeAreaColor,
       opacity: topSafeAreaOpacity ?? inherited.topSafeAreaOpacity,
@@ -183,8 +182,23 @@ class SmartSafeArea extends StatelessWidget {
       opacity: rightSafeAreaOpacity ?? inherited.rightSafeAreaOpacity,
       visible: showRightSafeArea ?? inherited.showRightSafeArea,
     );
+    final contentPadding = paddingWithoutTranslucentFills(
+      insets.content,
+      top: topFill,
+      bottom: bottomFill,
+      left: leftFill,
+      right: rightFill,
+    );
+    final overlayInsets = overlayInsetsForFills(
+      insets.content,
+      top: topFill,
+      bottom: bottomFill,
+      left: leftFill,
+      right: rightFill,
+    );
+    final padded = _consumePadding(context, contentPadding, child);
     final colored = SmartSafeAreaColorBars(
-      insets: insets.content,
+      insets: overlayInsets,
       top: topFill,
       bottom: bottomFill,
       left: leftFill,
@@ -215,7 +229,7 @@ class SmartSafeArea extends StatelessWidget {
         const Color(0xFF000000);
 
     return SmartSafeAreaColorBars(
-      insets: insets.content,
+      insets: overlayInsets,
       top: topFill,
       bottom: bottomFill,
       left: leftFill,

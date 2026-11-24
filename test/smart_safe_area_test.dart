@@ -250,6 +250,37 @@ void main() {
       expect(insets.bottom, 0);
     });
 
+    testWidgets('lets content draw behind translucent safe area colors',
+        (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+          child: const SmartSafeArea(
+            topSafeAreaColor: Color(0xFFFF0000),
+            topSafeAreaOpacity: 0.4,
+            bottomSafeAreaColor: Color(0xFF00FF00),
+            bottomSafeAreaOpacity: 0.4,
+            child: Text('content'),
+          ),
+        ),
+      );
+
+      expect(tester.getTopLeft(find.text('content')).dy, lessThan(47));
+      expect(
+        tester
+            .getSize(
+              find.byWidgetPredicate(
+                (widget) =>
+                    widget is ColoredBox &&
+                    widget.color.r == 1 &&
+                    widget.color.g == 0,
+              ),
+            )
+            .height,
+        47,
+      );
+    });
+
     testWidgets('paints top and bottom safe area colors', (tester) async {
       const topColor = Color(0xFFFF0000);
       const bottomColor = Color(0xFF00FF00);
@@ -442,6 +473,42 @@ void main() {
 
       expect(find.byType(SmartSafeAreaHost), findsOneWidget);
       expect(bottom, 48);
+    });
+
+    testWidgets('prefers live FlutterView insets when MediaQuery is stale',
+        (tester) async {
+      tester.view.padding = const FakeViewPadding(top: 47, bottom: 24);
+      tester.view.viewPadding = const FakeViewPadding(top: 47, bottom: 24);
+      addTearDown(tester.view.reset);
+
+      late double contentBottom;
+      late SystemNavMode mode;
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+                padding: const EdgeInsets.only(top: 47, bottom: 48),
+              ),
+              child: SmartSafeAreaHost(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+          home: Builder(
+            builder: (context) {
+              final insets = SmartSafeAreaInsets.of(context);
+              contentBottom = insets.contentBottom;
+              mode = insets.navMode;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(mode, SystemNavMode.gesture);
+      expect(contentBottom, 0);
     });
   });
 

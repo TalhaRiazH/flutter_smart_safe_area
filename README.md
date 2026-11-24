@@ -80,6 +80,12 @@ class MyApp extends StatelessWidget {
 
 `adaptExistingSafeArea` is on by default, so existing Flutter `SafeArea` widgets follow the same 3-button vs gesture rules. `SmartSafeAreaHost` also re-applies insets when the app resumes, so switching 3-button vs gesture in Android Settings takes effect when you come back.
 
+On Android, add `assetsPaths` to your activity `android:configChanges` so the Activity is not destroyed when the system navigation overlay changes:
+
+```xml
+android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode|assetsPaths"
+```
+
 ### 3. Build a screen
 
 ```dart
@@ -163,7 +169,7 @@ SmartSafeAreaScaffold(
 )
 ```
 
-Use `Colors.transparent` or opacity `0` for a fully see-through inset. On `auto`, the bottom color shows for 3-button navigation and stays hidden on gesture / home-indicator devices.
+Use `Colors.transparent` or opacity `0` for a fully see-through inset. When a color’s opacity is below `1`, scrollable content draws **behind** that bar so lists can slide under it. On `auto`, the bottom color shows for 3-button navigation and stays hidden on gesture / home-indicator devices.
 
 ## Inset the Background Too
 

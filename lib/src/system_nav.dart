@@ -1,8 +1,10 @@
 import 'dart:math' as math;
+import 'dart:ui' show FlutterView;
 
 import 'package:flutter/widgets.dart';
 
 import 'smart_safe_area_scope.dart';
+import 'smart_safe_area_simulation_scope.dart';
 import 'system_nav_mode.dart';
 
 /// Detects the system navigation style from [MediaQuery] / [FlutterView].
@@ -26,16 +28,43 @@ abstract final class SystemNav {
   /// This is the physical inset (3-button bar **or** home indicator), not the
   /// content inset. Use [contentBottomInset] when padding widgets.
   static double rawBottomInset(BuildContext context) {
-    final viewPaddingBottom = MediaQuery.viewPaddingOf(context).bottom;
-    var raw = viewPaddingBottom;
-    if (raw <= 0) {
-      final view = View.maybeOf(context);
-      if (view != null && view.devicePixelRatio > 0) {
-        raw = math.max(view.viewPadding.bottom, view.padding.bottom) /
-            view.devicePixelRatio;
+    final mqBottom = MediaQuery.viewPaddingOf(context).bottom;
+    if (SmartSafeAreaSimulationScope.lockedOf(context)) {
+      return mqBottom;
+    }
+    final live = liveViewPadding(context);
+    if (live != null) {
+      final stale = (live.bottom - mqBottom).abs() > 0.5;
+      if (stale && (live.bottom > 0 || mqBottom <= 0)) {
+        return live.bottom;
       }
     }
-    return raw;
+    if (mqBottom > 0) return mqBottom;
+    return live?.bottom ?? 0;
+  }
+
+  /// Current [FlutterView] padding in logical pixels, or `null` if unknown.
+  ///
+  /// Used when Android swaps the 3-button / gesture overlay and [MediaQuery]
+  /// still holds the previous inset.
+  static EdgeInsets? liveViewPadding(BuildContext? context) {
+    FlutterView? view;
+    if (context != null && context.mounted) {
+      view = View.maybeOf(context);
+    }
+    view ??= WidgetsBinding.instance.platformDispatcher.implicitView;
+    if (view == null) {
+      final views = WidgetsBinding.instance.platformDispatcher.views;
+      if (views.isNotEmpty) view = views.first;
+    }
+    if (view == null || view.devicePixelRatio <= 0) return null;
+    final physical = EdgeInsets.fromLTRB(
+      math.max(view.viewPadding.left, view.padding.left).toDouble(),
+      math.max(view.viewPadding.top, view.padding.top).toDouble(),
+      math.max(view.viewPadding.right, view.padding.right).toDouble(),
+      math.max(view.viewPadding.bottom, view.padding.bottom).toDouble(),
+    );
+    return physical / view.devicePixelRatio;
   }
 
   /// Resolved 3-button threshold from [SmartSafeAreaScope] or the default.

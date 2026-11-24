@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import 'smart_safe_area_simulation_scope.dart';
 import 'system_nav.dart';
 
 /// Preset insets for [SmartSafeAreaSimulator].
@@ -85,31 +86,35 @@ class SmartSafeAreaSimulator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (nav == SimulatedSystemNav.device && top == null) {
-      return child;
+    final locked = nav != SimulatedSystemNav.device || top != null;
+    Widget built = child;
+    if (locked) {
+      final mq = MediaQuery.of(context);
+      final bottom = resolvedBottom ?? mq.viewPadding.bottom;
+      final nextViewPadding = mq.viewPadding.copyWith(
+        top: top ?? mq.viewPadding.top,
+        bottom: bottom,
+        left: left,
+        right: right,
+      );
+      final nextPadding = mq.padding.copyWith(
+        top: top ?? mq.padding.top,
+        bottom: bottom >= SystemNav.defaultThreeButtonThreshold ? bottom : 0,
+        left: left,
+        right: right,
+      );
+      built = MediaQuery(
+        data: mq.copyWith(
+          viewPadding: nextViewPadding,
+          padding: nextPadding,
+        ),
+        child: child,
+      );
     }
 
-    final mq = MediaQuery.of(context);
-    final bottom = resolvedBottom ?? mq.viewPadding.bottom;
-    final nextViewPadding = mq.viewPadding.copyWith(
-      top: top ?? mq.viewPadding.top,
-      bottom: bottom,
-      left: left,
-      right: right,
-    );
-    final nextPadding = mq.padding.copyWith(
-      top: top ?? mq.padding.top,
-      bottom: bottom >= SystemNav.defaultThreeButtonThreshold ? bottom : 0,
-      left: left,
-      right: right,
-    );
-
-    return MediaQuery(
-      data: mq.copyWith(
-        viewPadding: nextViewPadding,
-        padding: nextPadding,
-      ),
-      child: child,
+    return SmartSafeAreaSimulationScope(
+      locked: locked,
+      child: built,
     );
   }
 }

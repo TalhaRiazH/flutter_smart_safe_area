@@ -36,6 +36,7 @@ export 'src/smart_safe_area_host.dart';
 export 'src/smart_safe_area_insets.dart';
 export 'src/smart_safe_area_scaffold.dart';
 export 'src/smart_safe_area_scope.dart';
+export 'src/smart_safe_area_simulation_scope.dart';
 export 'src/smart_safe_area_simulator.dart';
 export 'src/smart_system_nav_bar.dart';
 export 'src/system_nav.dart';

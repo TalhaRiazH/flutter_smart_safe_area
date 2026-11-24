@@ -29,15 +29,15 @@ class _SmartSafeAreaExampleAppState extends State<SmartSafeAreaExampleApp> {
         colorSchemeSeed: const Color(0xFF6EA8FF),
       ),
       builder: (context, child) {
-        return SmartSafeAreaSimulator(
-          nav: _simulated,
-          top: _simulated == SimulatedSystemNav.device ? null : 47,
-          child: SmartSafeAreaHost(
-            config: SmartSafeAreaConfig(
-              extendBackground: _extendBackground,
-              bottomBehavior: _behavior,
-            ),
-            showDebugOverlay: true,
+        return SmartSafeAreaHost(
+          config: SmartSafeAreaConfig(
+            extendBackground: _extendBackground,
+            bottomBehavior: _behavior,
+          ),
+          showDebugOverlay: true,
+          child: SmartSafeAreaSimulator(
+            nav: _simulated,
+            top: _simulated == SimulatedSystemNav.device ? null : 47,
             child: child ?? const SizedBox.shrink(),
           ),
         );
@@ -288,21 +288,24 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.28),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            child,
-          ],
+    return Material(
+      color: Colors.transparent,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.28),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white24),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              child,
+            ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.4
+
+* Translucent top/bottom/left/right safe-area colors no longer consume padding, so lists can scroll behind them.
+* Read live `FlutterView` insets when MediaQuery is stale after an Android 3-button / gesture overlay swap, and rebuild the tree so layout cannot stay stuck.
+* Recommend `android:configChanges` include `assetsPaths` so the Activity is not destroyed when the system navigation overlay changes.
+
 ## 0.1.3
 
 * Re-apply edge-to-edge and rebuild insets when the app resumes or window metrics change, so 3-button vs gesture updates after changing navigation in Settings.

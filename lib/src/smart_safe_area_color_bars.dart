@@ -16,6 +16,47 @@ Color? resolveSafeAreaFill({
   return color.withValues(alpha: color.a * next);
 }
 
+/// Whether a resolved fill should sit over scrolling content.
+///
+/// Translucent bars do not consume padding, so lists can move behind them.
+bool safeAreaFillIsTranslucent(Color? color) {
+  return color != null && color.a < 0.999;
+}
+
+/// Content padding with translucent sides left at `0` so children draw behind
+/// the overlay bars.
+EdgeInsets paddingWithoutTranslucentFills(
+  EdgeInsets insets, {
+  Color? top,
+  Color? bottom,
+  Color? left,
+  Color? right,
+}) {
+  return EdgeInsets.fromLTRB(
+    safeAreaFillIsTranslucent(left) ? 0 : insets.left,
+    safeAreaFillIsTranslucent(top) ? 0 : insets.top,
+    safeAreaFillIsTranslucent(right) ? 0 : insets.right,
+    safeAreaFillIsTranslucent(bottom) ? 0 : insets.bottom,
+  );
+}
+
+/// Overlay bar sizes. Translucent fills still use the real inset so the color
+/// covers the system region while content scrolls underneath.
+EdgeInsets overlayInsetsForFills(
+  EdgeInsets insets, {
+  Color? top,
+  Color? bottom,
+  Color? left,
+  Color? right,
+}) {
+  return EdgeInsets.fromLTRB(
+    left == null ? 0 : insets.left,
+    top == null ? 0 : insets.top,
+    right == null ? 0 : insets.right,
+    bottom == null ? 0 : insets.bottom,
+  );
+}
+
 /// Paints optional colors in the system inset regions around [child].
 class SmartSafeAreaColorBars extends StatelessWidget {
   /// Creates overlay bars for each inset side that has a color.
