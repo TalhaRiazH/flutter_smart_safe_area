@@ -1,0 +1,25 @@
+# When .pubignore exists, pub does not use .gitignore.
+# Keep this list complete so local build artifacts never ship to pub.dev.
+
+.cursor/
+.idea/
+*.iml
+.DS_Store
+.dart_tool/
+**/.dart_tool/
+build/
+**/build/
+coverage/
+doc/api/
+.flutter-plugins
+.flutter-plugins-dependencies
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+example/.flutter-plugins
+example/.flutter-plugins-dependencies
+**/*.lock
+!pubspec.yaml
+example/ios/Pods/
+example/macos/Pods/
+example/**/*.xcworkspace/xcuserdata/
+example/**/*.xcodeproj/xcuserdata/

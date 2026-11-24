@@ -1,0 +1,28 @@
+name: smart_safe_area
+description: Smart SafeArea that detects 3-button vs gesture navigation. Backgrounds stay edge-to-edge; content insets only when the system nav bar is visible.
+version: 0.1.0
+homepage: https://github.com/talhadevs/smart_safe_area
+repository: https://github.com/talhadevs/smart_safe_area
+issue_tracker: https://github.com/talhadevs/smart_safe_area/issues
+
+topics:
+  - safe-area
+  - edge-to-edge
+  - navigation-bar
+  - android
+  - ios
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:

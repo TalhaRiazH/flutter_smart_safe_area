@@ -1,0 +1,16 @@
+---
+description: GitHub account and commit email for smart_safe_area
+alwaysApply: true
+---
+
+# GitHub identity (smart_safe_area)
+
+- GitHub account: **talhadevs** (`gh auth status` must show talhadevs as active).
+- Commit author email: **talhariaz772@gmail.com** only.
+- Never use any other email (`talhaarif.devs@gmail.com`, TalhaRiazH, or others) for commits, tags, or GitHub on this project.
+- Before `git commit`, `git push`, or `gh` commands:
+  1. `gh auth switch -u talhadevs` if talhadevs is not active.
+  2. Confirm `git config user.email` is `talhariaz772@gmail.com` (local to this repo).
+- If local email is wrong, set only the **local** repo config (never global):
+  `git config user.email "talhariaz772@gmail.com"`
+- Do not push with TalhaRiazH credentials even if that account is logged in.
