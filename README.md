@@ -26,7 +26,7 @@ This package **looks at the phone and decides for you**:
 
 ## It is automatic
 
-The default mode is **`auto`**. You do **not** need to set any parameters. Add the package, do the three steps below, and it works.
+The default mode is **`auto`**. You do **not** need to set any parameters, and you do **not** need to replace your `Scaffold`. Add the package, do the two steps below, and it works.
 
 ### Full screen
 
@@ -48,7 +48,7 @@ You can color the top area (where the clock and battery are). A see-through colo
 
 ---
 
-## Setup in 3 steps
+## Setup in 2 steps
 
 ### Step 1 — Add the package
 
@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-### Step 3 — Use `SmartSafeAreaScaffold` instead of `Scaffold`
+**That's it.** Keep your normal `Scaffold`. You do not wrap screens with `SmartSafeAreaScaffold`.
 
 ```dart
 class HomeScreen extends StatelessWidget {
@@ -93,17 +93,43 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SmartSafeAreaScaffold(
+    return Scaffold(
       backgroundColor: Colors.blue,
-      body: const Center(
-        child: Text('I never hide under the navigation bar!'),
+      bottomNavigationBar: MyTabBar(),
+      body: ListView(
+        children: const [
+          Text('This already follows auto.'),
+        ],
       ),
     );
   }
 }
 ```
 
-**That's it.** Your app now handles 3-button, gesture, and iPhone screens by itself.
+After Step 2, these already follow `auto`:
+
+* a normal `Scaffold` with a `bottomNavigationBar`
+* a `ListView`
+* Flutter's own `SafeArea`
+
+On a 3-button phone they move up. On a gesture phone or iPhone they stay flush. No extra widget, and no parameters.
+
+### Optional — `SmartSafeAreaScaffold` only for extra options
+
+Use `SmartSafeAreaScaffold` **only** when you want something a normal `Scaffold` does not do: a color behind the status bar or the 3 buttons, a see-through color, hiding that color, or keeping the background inside the safe area too.
+
+```dart
+SmartSafeAreaScaffold(
+  backgroundColor: Colors.blue,
+  topSafeAreaColor: Colors.orange,   // extra: color behind the clock
+  bottomSafeAreaColor: Colors.black, // extra: color behind the 3 buttons
+  body: const Center(
+    child: Text('I never hide under the navigation bar!'),
+  ),
+)
+```
+
+You do not put this on every screen. One screen can use it, and the rest can stay on `Scaffold`.
 
 ### Android only: one extra line (recommended)
 
@@ -117,7 +143,7 @@ android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestSc
 
 ## Common recipes
 
-Copy the one you need.
+These use `SmartSafeAreaScaffold` because they set extra options. Skip this section if `auto` on a normal `Scaffold` is all you need.
 
 ### Add a bottom tab bar
 
@@ -182,19 +208,19 @@ SmartSafeAreaScaffold(
 
 In this mode the whole screen, background included, always stays clear of the bottom bar.
 
-### Already using `Scaffold`? Keep it
+### One widget that does not move by itself
 
-Wrap only the body:
+A plain `Center` or `Text` does not read the safe area. Wrap that one widget, not the whole `Scaffold`:
 
 ```dart
 Scaffold(
   body: SmartSafeArea(
-    child: MyContent(),
+    child: Center(child: Text('This one needs a wrap.')),
   ),
 )
 ```
 
-Your existing `SafeArea` widgets also follow the smart rules automatically after Step 2.
+A `ListView`, a `bottomNavigationBar`, and Flutter's `SafeArea` already read it, so leave those as they are.
 
 ### Use it only on Android (or only on iPhone)
 
@@ -343,8 +369,8 @@ When the user changes navigation in phone Settings and comes back to your app, i
 
 | Widget | Use it for |
 | --- | --- |
-| `SmartSafeAreaHost` | Turn the package on for the whole app (Step 2). |
-| `SmartSafeAreaScaffold` | A `Scaffold` that handles safe areas for you (Step 3). |
+| `SmartSafeAreaHost` | Turn the package on once for the whole app (Step 2). |
+| `SmartSafeAreaScaffold` | Optional. Only when you want colors, opacity, or other extra options. |
 | `SmartSafeArea` | A smarter replacement for Flutter's `SafeArea`. |
 | `SmartSystemNavBar` | A bottom bar that fills under the 3 buttons. Added for you by `SmartSafeAreaScaffold`. |
 | `SmartSafeAreaConfig` | App-wide settings. |

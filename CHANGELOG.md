@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.7
+
+* Document that a normal `Scaffold` is enough after `SmartSafeAreaHost`. `SmartSafeAreaScaffold` is only for extra options such as colors and opacity.
+
 ## 0.1.6
 
 * Rewrite the README in plain language: 3-step setup, copy-paste recipes, and a parameter table with defaults.

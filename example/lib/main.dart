@@ -48,7 +48,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Step 3: use SmartSafeAreaScaffold instead of Scaffold.
+    // Optional. A normal Scaffold already follows auto.
+    // This screen uses SmartSafeAreaScaffold only for the colors below.
     return SmartSafeAreaScaffold(
       // Fills the whole screen, even behind the system bars.
       backgroundColor: const Color(0xFF1B4F72),

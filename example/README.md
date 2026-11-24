@@ -1,6 +1,10 @@
 # flutter_smart_safe_area example
 
-The smallest app you need. Three steps, no settings — it runs on `auto`.
+The smallest app you need. Two steps, no settings — it runs on `auto`.
+
+You do **not** have to replace `Scaffold`. After `SmartSafeAreaHost.materialBuilder()`, a normal `Scaffold`, `ListView`, and `SafeArea` already follow `auto`.
+
+This example uses `SmartSafeAreaScaffold` only because it sets extra options: a top color and a bottom color.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -33,7 +37,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Step 3: use SmartSafeAreaScaffold instead of Scaffold.
+    // Optional. A normal Scaffold is enough for auto.
+    // SmartSafeAreaScaffold is only here for the color options below.
     return SmartSafeAreaScaffold(
       backgroundColor: Colors.blue,
       topSafeAreaColor: Colors.orange,     // optional
