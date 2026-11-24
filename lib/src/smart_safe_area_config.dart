@@ -30,6 +30,10 @@ class SmartSafeAreaConfig {
     this.adaptExistingSafeArea = true,
     this.enableEdgeToEdge = true,
     this.letterboxColor,
+    this.topSafeAreaColor,
+    this.bottomSafeAreaColor,
+    this.leftSafeAreaColor,
+    this.rightSafeAreaColor,
   }) : assert(
           applyOnAndroid || applyOnIOS,
           'At least one of applyOnAndroid or applyOnIOS must be true.',
@@ -120,6 +124,21 @@ class SmartSafeAreaConfig {
   /// If null, the scaffold / widget background color is used, then black.
   final Color? letterboxColor;
 
+  /// Color painted in the top inset (status bar / notch). `null` leaves the
+  /// background visible there.
+  final Color? topSafeAreaColor;
+
+  /// Color painted in the bottom inset (3-button system nav). `null` leaves
+  /// the background visible there. Gesture / home-indicator devices stay
+  /// unpainted when [bottomBehavior] is [BottomSafeAreaBehavior.auto].
+  final Color? bottomSafeAreaColor;
+
+  /// Color painted in the left inset. `null` leaves the background visible.
+  final Color? leftSafeAreaColor;
+
+  /// Color painted in the right inset. `null` leaves the background visible.
+  final Color? rightSafeAreaColor;
+
   /// Returns a copy with the given fields replaced.
   SmartSafeAreaConfig copyWith({
     BottomSafeAreaBehavior? bottomBehavior,
@@ -138,6 +157,14 @@ class SmartSafeAreaConfig {
     bool? enableEdgeToEdge,
     Color? letterboxColor,
     bool clearLetterboxColor = false,
+    Color? topSafeAreaColor,
+    bool clearTopSafeAreaColor = false,
+    Color? bottomSafeAreaColor,
+    bool clearBottomSafeAreaColor = false,
+    Color? leftSafeAreaColor,
+    bool clearLeftSafeAreaColor = false,
+    Color? rightSafeAreaColor,
+    bool clearRightSafeAreaColor = false,
   }) {
     return SmartSafeAreaConfig(
       bottomBehavior: bottomBehavior ?? this.bottomBehavior,
@@ -158,6 +185,18 @@ class SmartSafeAreaConfig {
       enableEdgeToEdge: enableEdgeToEdge ?? this.enableEdgeToEdge,
       letterboxColor:
           clearLetterboxColor ? null : (letterboxColor ?? this.letterboxColor),
+      topSafeAreaColor: clearTopSafeAreaColor
+          ? null
+          : (topSafeAreaColor ?? this.topSafeAreaColor),
+      bottomSafeAreaColor: clearBottomSafeAreaColor
+          ? null
+          : (bottomSafeAreaColor ?? this.bottomSafeAreaColor),
+      leftSafeAreaColor: clearLeftSafeAreaColor
+          ? null
+          : (leftSafeAreaColor ?? this.leftSafeAreaColor),
+      rightSafeAreaColor: clearRightSafeAreaColor
+          ? null
+          : (rightSafeAreaColor ?? this.rightSafeAreaColor),
     );
   }
 
@@ -179,7 +218,11 @@ class SmartSafeAreaConfig {
         other.keyboardAware == keyboardAware &&
         other.adaptExistingSafeArea == adaptExistingSafeArea &&
         other.enableEdgeToEdge == enableEdgeToEdge &&
-        other.letterboxColor == letterboxColor;
+        other.letterboxColor == letterboxColor &&
+        other.topSafeAreaColor == topSafeAreaColor &&
+        other.bottomSafeAreaColor == bottomSafeAreaColor &&
+        other.leftSafeAreaColor == leftSafeAreaColor &&
+        other.rightSafeAreaColor == rightSafeAreaColor;
   }
 
   @override
@@ -198,6 +241,12 @@ class SmartSafeAreaConfig {
         keyboardAware,
         adaptExistingSafeArea,
         enableEdgeToEdge,
-        letterboxColor,
+        Object.hash(
+          letterboxColor,
+          topSafeAreaColor,
+          bottomSafeAreaColor,
+          leftSafeAreaColor,
+          rightSafeAreaColor,
+        ),
       );
 }

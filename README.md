@@ -39,6 +39,7 @@ That can lead to:
 * Smart bottom navigation bar support
 * Simulator for desktop and iOS Simulator testing
 * Enable Android, iOS, or both (at least one platform is required)
+* Optional colors for the top, bottom, left, and right safe-area regions
 
 ## Installation
 
@@ -145,6 +146,23 @@ SmartSafeAreaHost(
 | `applyOnAndroid: false`, `applyOnIOS: true` | Unchanged | Applied |
 | both `false` | Not allowed | Not allowed |
 
+## Safe Area Colors
+
+Paint the system inset regions. `null` (default) leaves the background visible.
+
+```dart
+SmartSafeAreaScaffold(
+  backgroundColor: Colors.indigo,
+  topSafeAreaColor: Colors.orange,
+  bottomSafeAreaColor: Colors.deepPurple,
+  leftSafeAreaColor: Colors.teal,
+  rightSafeAreaColor: Colors.teal,
+  body: YourContent(),
+)
+```
+
+On `auto`, the bottom color shows for 3-button navigation and stays hidden on gesture / home-indicator devices.
+
 ## Inset the Background Too
 
 ```dart
@@ -209,6 +227,7 @@ MaterialApp(
 | `keyboardAware` | Bottom inset is at least the keyboard height |
 | `adaptExistingSafeArea` | Flutter `SafeArea` uses the smart inset |
 | `enableEdgeToEdge` | Transparent system bars |
+| `topSafeAreaColor` / `bottomSafeAreaColor` / `leftSafeAreaColor` / `rightSafeAreaColor` | Colors for each inset region |
 
 ## Read Safe Area Values Directly
 
@@ -258,10 +277,7 @@ Override the cutoff with `threeButtonNavThreshold`.
 
 ## Example
 
-```bash
-cd example
-flutter run
-```
+A full demo lives in the [example app](https://github.com/TalhaRiazH/flutter_smart_safe_area/tree/main/example) on GitHub.
 
 ## Issues
 
@@ -271,4 +287,4 @@ Report bugs at [TalhaRiazH/flutter_smart_safe_area](https://github.com/TalhaRiaz
 
 `flutter_smart_safe_area` is available under the [MIT License](LICENSE).
 
-API reference (after publish): [flutter_smart_safe_area](https://pub.dev/documentation/flutter_smart_safe_area/latest/).
+API reference: [flutter_smart_safe_area](https://pub.dev/documentation/flutter_smart_safe_area/latest/).

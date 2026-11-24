@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'bottom_safe_area_behavior.dart';
+import 'smart_safe_area_color_bars.dart';
 import 'smart_safe_area_config.dart';
 import 'smart_safe_area_insets.dart';
 import 'smart_safe_area_scope.dart';
@@ -35,6 +36,10 @@ class SmartSafeArea extends StatelessWidget {
     this.backgroundGradient,
     this.background,
     this.letterboxColor,
+    this.topSafeAreaColor,
+    this.bottomSafeAreaColor,
+    this.leftSafeAreaColor,
+    this.rightSafeAreaColor,
     this.keyboardAware,
     this.threeButtonNavThreshold,
     required this.child,
@@ -82,6 +87,18 @@ class SmartSafeArea extends StatelessWidget {
   /// Color of the unsafe region when [extendBackground] is `false`.
   final Color? letterboxColor;
 
+  /// Color of the top inset. `null` inherits from [SmartSafeAreaConfig].
+  final Color? topSafeAreaColor;
+
+  /// Color of the bottom inset. `null` inherits from the config.
+  final Color? bottomSafeAreaColor;
+
+  /// Color of the left inset. `null` inherits from the config.
+  final Color? leftSafeAreaColor;
+
+  /// Color of the right inset. `null` inherits from the config.
+  final Color? rightSafeAreaColor;
+
   /// When `true`, bottom padding is at least the keyboard height.
   final bool? keyboardAware;
 
@@ -114,9 +131,17 @@ class SmartSafeArea extends StatelessWidget {
     );
 
     final padded = _consumePadding(context, insets.content, child);
+    final colored = SmartSafeAreaColorBars(
+      insets: insets.content,
+      top: topSafeAreaColor ?? inherited.topSafeAreaColor,
+      bottom: bottomSafeAreaColor ?? inherited.bottomSafeAreaColor,
+      left: leftSafeAreaColor ?? inherited.leftSafeAreaColor,
+      right: rightSafeAreaColor ?? inherited.rightSafeAreaColor,
+      child: padded,
+    );
 
     if (!_hasBackground) {
-      return padded;
+      return colored;
     }
 
     final extend = extendBackground ?? inherited.extendBackground;
@@ -127,7 +152,7 @@ class SmartSafeArea extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Positioned.fill(child: bg),
-          Positioned.fill(child: padded),
+          Positioned.fill(child: colored),
         ],
       );
     }
@@ -137,23 +162,30 @@ class SmartSafeArea extends StatelessWidget {
         backgroundColor ??
         const Color(0xFF000000);
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned.fill(child: ColoredBox(color: letterbox)),
-        Padding(
-          padding: insets.content,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Positioned.fill(child: bg),
-              Positioned.fill(
-                child: _consumePadding(context, EdgeInsets.zero, child),
-              ),
-            ],
+    return SmartSafeAreaColorBars(
+      insets: insets.content,
+      top: topSafeAreaColor ?? inherited.topSafeAreaColor,
+      bottom: bottomSafeAreaColor ?? inherited.bottomSafeAreaColor,
+      left: leftSafeAreaColor ?? inherited.leftSafeAreaColor,
+      right: rightSafeAreaColor ?? inherited.rightSafeAreaColor,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned.fill(child: ColoredBox(color: letterbox)),
+          Padding(
+            padding: insets.content,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(child: bg),
+                Positioned.fill(
+                  child: _consumePadding(context, EdgeInsets.zero, child),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

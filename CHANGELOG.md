@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.2
+
+* Add `topSafeAreaColor`, `bottomSafeAreaColor`, `leftSafeAreaColor`, and `rightSafeAreaColor` to paint the system inset regions.
+
 ## 0.1.1
 
 * Add `applyOnAndroid` and `applyOnIOS` so you can turn the package off on one platform.

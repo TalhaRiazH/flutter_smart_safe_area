@@ -7,16 +7,8 @@ Future<void> main() async {
   runApp(const TestSafeAreaApp());
 }
 
-class TestSafeAreaApp extends StatefulWidget {
+class TestSafeAreaApp extends StatelessWidget {
   const TestSafeAreaApp({super.key});
-
-  @override
-  State<TestSafeAreaApp> createState() => _TestSafeAreaAppState();
-}
-
-class _TestSafeAreaAppState extends State<TestSafeAreaApp> {
-  bool _extendBackground = true;
-  SimulatedSystemNav _simulated = SimulatedSystemNav.device;
 
   @override
   Widget build(BuildContext context) {
@@ -26,147 +18,69 @@ class _TestSafeAreaAppState extends State<TestSafeAreaApp> {
         brightness: Brightness.dark,
         colorSchemeSeed: const Color(0xFF6EA8FF),
       ),
-      builder: (context, child) {
-        return SmartSafeAreaSimulator(
-          nav: _simulated,
-          top: _simulated == SimulatedSystemNav.device ? null : 47,
-          child: SmartSafeAreaHost(
-            config: SmartSafeAreaConfig(
-              extendBackground: _extendBackground,
-              bottomBehavior: BottomSafeAreaBehavior.auto,
-            ),
-            showDebugOverlay: true,
-            child: child ?? const SizedBox.shrink(),
-          ),
-        );
-      },
-      home: _HomeScreen(
-        extendBackground: _extendBackground,
-        simulated: _simulated,
-        onExtendBackground: (value) {
-          setState(() => _extendBackground = value);
-        },
-        onSimulated: (value) {
-          setState(() => _simulated = value);
-        },
+      builder: SmartSafeAreaHost.materialBuilder(
+        config: const SmartSafeAreaConfig(
+          extendBackground: true,
+          bottomBehavior: BottomSafeAreaBehavior.auto,
+          topSafeAreaColor: Color(0xFFFF8C42),
+          bottomSafeAreaColor: Color(0xFF7B61FF),
+        ),
       ),
+      home: const _HomeScreen(),
     );
   }
 }
 
 class _HomeScreen extends StatelessWidget {
-  const _HomeScreen({
-    required this.extendBackground,
-    required this.simulated,
-    required this.onExtendBackground,
-    required this.onSimulated,
-  });
+  const _HomeScreen();
 
-  final bool extendBackground;
-  final SimulatedSystemNav simulated;
-  final ValueChanged<bool> onExtendBackground;
-  final ValueChanged<SimulatedSystemNav> onSimulated;
+  static const _tiles = <(String, Color)>[
+    ('Coral', Color(0xFFFF6B6B)),
+    ('Sunset', Color(0xFFFF8C42)),
+    ('Gold', Color(0xFFFFD166)),
+    ('Lime', Color(0xFF9BE564)),
+    ('Mint', Color(0xFF2EC4B6)),
+    ('Sky', Color(0xFF4D96FF)),
+    ('Violet', Color(0xFF7B61FF)),
+    ('Pink', Color(0xFFFF5DA2)),
+    ('Rose', Color(0xFFE85D75)),
+    ('Teal', Color(0xFF00A896)),
+    ('Indigo', Color(0xFF3D5A80)),
+    ('Peach', Color(0xFFFFA69E)),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final insets = context.smartSafeArea;
-
     return SmartSafeAreaScaffold(
-      extendBackground: extendBackground,
+      extendBackground: true,
       bottomBehavior: BottomSafeAreaBehavior.auto,
-      letterboxColor: const Color(0xFF05070D),
-      backgroundColor: const Color(0xFF10203A),
-      backgroundGradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color(0xFF2B4C7E),
-          Color(0xFF10203A),
-          Color(0xFF0A1220),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
-      ),
+      backgroundColor: const Color(0xFF1B4F72),
+      topSafeAreaColor: const Color(0xFFFF8C42),
+      bottomSafeAreaColor: const Color(0xFF7B61FF),
       bottomNavigationBar: const _DemoTabBar(),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        children: [
-          Text(
-            'test_safe_area',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Local Android test only. Bottom safe area is auto: inset for '
-            '3-button, flush for gesture. Leave Simulate on "device" and '
-            'switch navigation in Android settings.',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16),
-          _InfoCard(
-            title: 'Detected on this phone',
-            rows: [
-              ('Bottom behavior', 'auto'),
-              ('Nav mode', insets.navMode.name),
-              ('Raw bottom', '${insets.rawBottom.toStringAsFixed(0)} dp'),
-              (
-                'Content bottom',
-                '${insets.contentBottom.toStringAsFixed(0)} dp'
+      body: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        itemCount: _tiles.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final tile = _tiles[index];
+          return Container(
+            height: 88,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: tile.$2,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              tile.$1,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
               ),
-              ('Top inset', '${insets.content.top.toStringAsFixed(0)} dp'),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _Panel(
-            title: 'Simulate (optional)',
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final nav in SimulatedSystemNav.values)
-                  ChoiceChip(
-                    label: Text(nav.name),
-                    selected: simulated == nav,
-                    onSelected: (_) => onSimulated(nav),
-                  ),
-              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          _Panel(
-            title: 'Background behind system nav',
-            child: SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('extendBackground'),
-              subtitle: Text(
-                extendBackground
-                    ? 'Gradient can sit behind the system nav'
-                    : 'Everything, including the background, is inset',
-              ),
-              value: extendBackground,
-              onChanged: onExtendBackground,
-            ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.check_circle_outline),
-            label: const Text('Sample button (should lift on 3-button)'),
-          ),
-          const SizedBox(height: 12),
-          const Card(
-            child: ListTile(
-              leading: Icon(Icons.phone_android),
-              title: Text('Real device test'),
-              subtitle: Text('Switch Android navigation and watch the numbers'),
-            ),
-          ),
-          const SizedBox(height: 24),
-        ],
+          );
+        },
       ),
     );
   }
@@ -177,16 +91,35 @@ class _DemoTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: Color(0xFF15233A),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
+    final size = MediaQuery.sizeOf(context);
+    final barHeight = (size.height * 0.09).clamp(72.0, 104.0);
+    final iconSize = (size.shortestSide * 0.07).clamp(28.0, 36.0);
+    final fontSize = (iconSize * 0.42).clamp(12.0, 16.0);
+
+    return ColoredBox(
+      color: const Color(0xFF12263A),
+      child: SizedBox(
+        height: barHeight,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _TabIcon(icon: Icons.home_outlined, label: 'Home'),
-            _TabIcon(icon: Icons.explore_outlined, label: 'Explore'),
-            _TabIcon(icon: Icons.settings_outlined, label: 'Settings'),
+            _TabIcon(
+              icon: Icons.home_outlined,
+              label: 'Home',
+              iconSize: iconSize,
+              fontSize: fontSize,
+            ),
+            _TabIcon(
+              icon: Icons.explore_outlined,
+              label: 'Explore',
+              iconSize: iconSize,
+              fontSize: fontSize,
+            ),
+            _TabIcon(
+              icon: Icons.settings_outlined,
+              label: 'Settings',
+              iconSize: iconSize,
+              fontSize: fontSize,
+            ),
           ],
         ),
       ),
@@ -195,79 +128,34 @@ class _DemoTabBar extends StatelessWidget {
 }
 
 class _TabIcon extends StatelessWidget {
-  const _TabIcon({required this.icon, required this.label});
+  const _TabIcon({
+    required this.icon,
+    required this.label,
+    required this.iconSize,
+    required this.fontSize,
+  });
 
   final IconData icon;
   final String label;
+  final double iconSize;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 22),
-        const SizedBox(height: 4),
-        Text(label, style: Theme.of(context).textTheme.labelSmall),
-      ],
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({required this.title, required this.rows});
-
-  final String title;
-  final List<(String, String)> rows;
-
-  @override
-  Widget build(BuildContext context) {
-    return _Panel(
-      title: title,
+    return Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          for (final row in rows)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Expanded(child: Text(row.$1)),
-                  Text(
-                    row.$2,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
+          Icon(icon, size: iconSize),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w600,
             ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class _Panel extends StatelessWidget {
-  const _Panel({required this.title, required this.child});
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.28),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            child,
-          ],
-        ),
       ),
     );
   }

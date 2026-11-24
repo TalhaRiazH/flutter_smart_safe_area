@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'bottom_safe_area_behavior.dart';
 import 'smart_safe_area.dart';
+import 'smart_safe_area_color_bars.dart';
 import 'smart_safe_area_insets.dart';
 import 'smart_safe_area_scope.dart';
 import 'smart_system_nav_bar.dart';
@@ -36,6 +37,10 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     this.background,
     this.extendBackground,
     this.letterboxColor,
+    this.topSafeAreaColor,
+    this.bottomSafeAreaColor,
+    this.leftSafeAreaColor,
+    this.rightSafeAreaColor,
     this.bottomBehavior,
     this.top,
     this.bottom,
@@ -96,6 +101,21 @@ class SmartSafeAreaScaffold extends StatelessWidget {
 
   /// Color of the unsafe region when [extendBackground] is `false`.
   final Color? letterboxColor;
+
+  /// Color of the status-bar inset. `null` inherits from [SmartSafeAreaConfig].
+  final Color? topSafeAreaColor;
+
+  /// Color of the bottom system-nav inset. `null` inherits from the config.
+  ///
+  /// When [bottomNavigationBar] is set, this also fills the 3-button region
+  /// under the bar.
+  final Color? bottomSafeAreaColor;
+
+  /// Color of the left inset. `null` inherits from the config.
+  final Color? leftSafeAreaColor;
+
+  /// Color of the right inset. `null` inherits from the config.
+  final Color? rightSafeAreaColor;
 
   /// Bottom inset policy. `null` inherits from [SmartSafeAreaScope].
   ///
@@ -158,6 +178,11 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     final behavior = bottomBehavior ??
         (extend ? inherited.bottomBehavior : BottomSafeAreaBehavior.always);
 
+    final topColor = topSafeAreaColor ?? inherited.topSafeAreaColor;
+    final bottomColor = bottomSafeAreaColor ?? inherited.bottomSafeAreaColor;
+    final leftColor = leftSafeAreaColor ?? inherited.leftSafeAreaColor;
+    final rightColor = rightSafeAreaColor ?? inherited.rightSafeAreaColor;
+
     final bodyNeedsTop = applyTop && (appBar == null || extendBodyBehindAppBar);
     final bodyNeedsBottom =
         applyBottom && (bottomNavigationBar == null || extendBody);
@@ -165,7 +190,7 @@ class SmartSafeAreaScaffold extends StatelessWidget {
     Widget? nav = bottomNavigationBar;
     if (nav != null && wrapBottomNavigationBar) {
       nav = SmartSystemNavBar(
-        color: extend ? backgroundColor : null,
+        color: extend ? (bottomColor ?? backgroundColor) : null,
         bottomBehavior: behavior,
         threeButtonNavThreshold: threeButtonNavThreshold,
         child: nav,
@@ -190,6 +215,10 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         backgroundGradient: backgroundGradient,
         background: background,
         letterboxColor: letterboxColor,
+        topSafeAreaColor: topColor,
+        bottomSafeAreaColor: bodyNeedsBottom ? bottomColor : null,
+        leftSafeAreaColor: leftColor,
+        rightSafeAreaColor: rightColor,
         child: body,
       );
     } else if (extend) {
@@ -203,6 +232,10 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         bottomBehavior: behavior,
         keyboardAware: keyboardAware,
         threeButtonNavThreshold: threeButtonNavThreshold,
+        topSafeAreaColor: topColor,
+        bottomSafeAreaColor: bodyNeedsBottom ? bottomColor : null,
+        leftSafeAreaColor: leftColor,
+        rightSafeAreaColor: rightColor,
         child: body,
       );
     } else {
@@ -272,17 +305,24 @@ class SmartSafeAreaScaffold extends StatelessWidget {
         backgroundColor ??
         const Color(0xFF000000);
 
-    return ColoredBox(
-      color: letterbox,
-      child: Padding(
-        padding: insets.content,
-        child: MediaQuery.removePadding(
-          context: context,
-          removeTop: insets.content.top > 0,
-          removeBottom: insets.content.bottom > 0,
-          removeLeft: insets.content.left > 0,
-          removeRight: insets.content.right > 0,
-          child: scaffold,
+    return SmartSafeAreaColorBars(
+      insets: insets.content,
+      top: topColor,
+      bottom: bottomColor,
+      left: leftColor,
+      right: rightColor,
+      child: ColoredBox(
+        color: letterbox,
+        child: Padding(
+          padding: insets.content,
+          child: MediaQuery.removePadding(
+            context: context,
+            removeTop: insets.content.top > 0,
+            removeBottom: insets.content.bottom > 0,
+            removeLeft: insets.content.left > 0,
+            removeRight: insets.content.right > 0,
+            child: scaffold,
+          ),
         ),
       ),
     );

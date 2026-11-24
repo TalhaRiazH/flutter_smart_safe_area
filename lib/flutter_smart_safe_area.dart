@@ -30,6 +30,7 @@ library;
 
 export 'src/bottom_safe_area_behavior.dart';
 export 'src/smart_safe_area.dart';
+export 'src/smart_safe_area_color_bars.dart';
 export 'src/smart_safe_area_config.dart';
 export 'src/smart_safe_area_host.dart';
 export 'src/smart_safe_area_insets.dart';

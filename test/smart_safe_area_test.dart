@@ -249,6 +249,54 @@ void main() {
       expect(insets.top, 47);
       expect(insets.bottom, 0);
     });
+
+    testWidgets('paints top and bottom safe area colors', (tester) async {
+      const topColor = Color(0xFFFF0000);
+      const bottomColor = Color(0xFF00FF00);
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+          child: const SmartSafeArea(
+            topSafeAreaColor: topColor,
+            bottomSafeAreaColor: bottomColor,
+            child: Text('content'),
+          ),
+        ),
+      );
+
+      final topBox = tester.widget<ColoredBox>(
+        find.byWidgetPredicate(
+          (widget) => widget is ColoredBox && widget.color == topColor,
+        ),
+      );
+      final bottomBox = tester.widget<ColoredBox>(
+        find.byWidgetPredicate(
+          (widget) => widget is ColoredBox && widget.color == bottomColor,
+        ),
+      );
+      expect(topBox.color, topColor);
+      expect(bottomBox.color, bottomColor);
+      expect(
+        tester
+            .getSize(
+              find.byWidgetPredicate(
+                (widget) => widget is ColoredBox && widget.color == topColor,
+              ),
+            )
+            .height,
+        47,
+      );
+      expect(
+        tester
+            .getSize(
+              find.byWidgetPredicate(
+                (widget) => widget is ColoredBox && widget.color == bottomColor,
+              ),
+            )
+            .height,
+        48,
+      );
+    });
   });
 
   group('SmartSafeAreaHost', () {
