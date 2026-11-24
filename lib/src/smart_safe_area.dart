@@ -127,7 +127,7 @@ class SmartSafeArea extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Positioned.fill(child: bg),
-          padded,
+          Positioned.fill(child: padded),
         ],
       );
     }
@@ -147,7 +147,9 @@ class SmartSafeArea extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Positioned.fill(child: bg),
-              _consumePadding(context, EdgeInsets.zero, child),
+              Positioned.fill(
+                child: _consumePadding(context, EdgeInsets.zero, child),
+              ),
             ],
           ),
         ),

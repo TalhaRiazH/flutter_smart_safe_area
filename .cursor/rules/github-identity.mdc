@@ -7,10 +7,13 @@ alwaysApply: true
 
 - GitHub repo: **https://github.com/TalhaRiazH/flutter_smart_safe_area**
 - GitHub account for push: **TalhaRiazH**
+- Commit author name: **talha**
 - Commit author email: **talhariaz772@gmail.com** only.
-- Never use `talhaarif.devs@gmail.com`, **talhadevs**, or any other email or GitHub account on this project.
+- Never use **talhadevs** as the commit name, GitHub account, or remote.
+- Never use `talhaarif.devs@gmail.com` or any other email.
 - Before `git commit` or `git push`:
   1. `gh auth switch -u TalhaRiazH` if TalhaRiazH is not active.
-  2. Confirm `git config user.email` is `talhariaz772@gmail.com` (local to this repo).
-- If local email is wrong, set only the **local** repo config (never global):
+  2. Confirm local `user.name` is `talha` and `user.email` is `talhariaz772@gmail.com`.
+- If local identity is wrong, set only the **local** repo config (never global):
+  `git config user.name "talha"`
   `git config user.email "talhariaz772@gmail.com"`

@@ -84,6 +84,9 @@ class SmartSafeAreaHost extends StatelessWidget {
   }
 
   /// [MaterialApp.builder] helper.
+  ///
+  /// [then] wraps the navigator [child] **inside** the host, so it still sees
+  /// the adapted [MediaQuery] padding.
   static TransitionBuilder materialBuilder({
     SmartSafeAreaConfig config = const SmartSafeAreaConfig(),
     bool showDebugOverlay = false,
@@ -92,17 +95,14 @@ class SmartSafeAreaHost extends StatelessWidget {
     TransitionBuilder? then,
   }) {
     return (BuildContext context, Widget? child) {
-      Widget wrapped = SmartSafeAreaHost(
+      final inner = then != null ? then(context, child) : child;
+      return SmartSafeAreaHost(
         config: config,
         showDebugOverlay: showDebugOverlay,
         statusBarIconBrightness: statusBarIconBrightness,
         systemNavigationBarIconBrightness: systemNavigationBarIconBrightness,
-        child: child ?? const SizedBox.shrink(),
+        child: inner ?? const SizedBox.shrink(),
       );
-      if (then != null) {
-        wrapped = then(context, wrapped);
-      }
-      return wrapped;
     };
   }
 
@@ -120,8 +120,7 @@ class SmartSafeAreaHost extends StatelessWidget {
       built = AnnotatedRegion<SystemUiOverlayStyle>(
         value: overlayStyle(
           statusBarIconBrightness: statusBarIconBrightness,
-          systemNavigationBarIconBrightness:
-              systemNavigationBarIconBrightness,
+          systemNavigationBarIconBrightness: systemNavigationBarIconBrightness,
         ),
         child: built,
       );

@@ -110,7 +110,8 @@ void main() {
   });
 
   group('SmartSafeArea', () {
-    testWidgets('pads content on 3-button and leaves top inset', (tester) async {
+    testWidgets('pads content on 3-button and leaves top inset',
+        (tester) async {
       await tester.pumpWidget(
         _harness(
           viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
@@ -199,6 +200,122 @@ void main() {
       );
 
       expect(padding.bottom, 48);
+    });
+  });
+
+  group('SmartSafeAreaHost.materialBuilder', () {
+    testWidgets('then wraps the route child inside the host', (tester) async {
+      const innerKey = Key('then-child');
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: SmartSafeAreaHost.materialBuilder(
+            then: (context, child) {
+              return KeyedSubtree(
+                key: innerKey,
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+          ),
+          home: const SizedBox.shrink(),
+        ),
+      );
+
+      expect(
+        find.descendant(
+          of: find.byType(SmartSafeAreaHost),
+          matching: find.byKey(innerKey),
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('SmartSystemNavBar', () {
+    testWidgets('adds a 3-button filler under the tab row', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(bottom: 48),
+          child: const Align(
+            alignment: Alignment.bottomCenter,
+            child: SmartSystemNavBar(
+              color: Color(0xFFFF0000),
+              child: SizedBox(height: 56, width: double.infinity),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(SmartSystemNavBar)).height, 104);
+    });
+
+    testWidgets('does not add filler on gesture devices', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(bottom: 34),
+          child: const Align(
+            alignment: Alignment.bottomCenter,
+            child: SmartSystemNavBar(
+              color: Color(0xFFFF0000),
+              child: SizedBox(height: 56, width: double.infinity),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.getSize(find.byType(SmartSystemNavBar)).height, 56);
+    });
+  });
+
+  group('SmartSafeAreaScaffold', () {
+    testWidgets('insets the whole screen when extendBackground is false',
+        (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(top: 47, bottom: 34),
+          child: const SmartSafeAreaScaffold(
+            extendBackground: false,
+            backgroundColor: Color(0xFF3F51B5),
+            letterboxColor: Color(0xFF000000),
+            body: Text('body'),
+          ),
+        ),
+      );
+
+      expect(find.text('body'), findsOneWidget);
+      final padding = tester.widget<Padding>(
+        find
+            .ancestor(
+              of: find.byType(Scaffold),
+              matching: find.byType(Padding),
+            )
+            .first,
+      );
+      final insets = padding.padding.resolve(TextDirection.ltr);
+      expect(insets.top, 47);
+      expect(insets.bottom, 34);
+    });
+
+    testWidgets('lifts the FAB above 3-button nav', (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          viewPadding: const EdgeInsets.only(bottom: 48),
+          child: SmartSafeAreaScaffold(
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+            body: const SizedBox.expand(),
+          ),
+        ),
+      );
+
+      final fabPadding = tester.widget<Padding>(
+        find.ancestor(
+          of: find.byType(FloatingActionButton),
+          matching: find.byType(Padding),
+        ),
+      );
+      expect(fabPadding.padding.resolve(TextDirection.ltr).bottom, 48);
     });
   });
 

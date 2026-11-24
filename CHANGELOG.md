@@ -11,3 +11,5 @@ All notable changes to this project are documented in this file.
 * `SmartSafeAreaHost` adapts Flutter's own `SafeArea` app-wide.
 * `SmartSafeAreaScaffold`, `SmartSystemNavBar`, and `SmartSafeAreaSimulator`.
 * Configurable bottom behavior (`auto`, `always`, `never`), letterboxing, extra padding, and keyboard awareness.
+* `SmartSafeAreaHost.materialBuilder(then:)` wraps the route child inside the host.
+* `SmartSafeAreaScaffold` lifts the floating action button above 3-button system navigation.

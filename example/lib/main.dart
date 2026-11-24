@@ -202,8 +202,7 @@ class _HomeScreen extends StatelessWidget {
     return switch (value) {
       BottomSafeAreaBehavior.auto =>
         '3-button: inset. Gesture: flush with the edge.',
-      BottomSafeAreaBehavior.always =>
-        'Always apply the raw bottom inset.',
+      BottomSafeAreaBehavior.always => 'Always apply the raw bottom inset.',
       BottomSafeAreaBehavior.never => 'Never apply a bottom inset.',
     };
   }

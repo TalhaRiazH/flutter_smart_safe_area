@@ -59,7 +59,10 @@ class SmartSafeAreaScaffold extends StatelessWidget {
   /// Screen content. Inset according to smart safe-area rules.
   final Widget body;
 
-  /// Optional floating action button. Passed through to [Scaffold].
+  /// Optional floating action button.
+  ///
+  /// When there is no [bottomNavigationBar], the button is lifted by the smart
+  /// bottom inset so it does not sit under 3-button system navigation.
   final Widget? floatingActionButton;
 
   /// Location of [floatingActionButton].
@@ -206,13 +209,39 @@ class SmartSafeAreaScaffold extends StatelessWidget {
       bodyWidget = body;
     }
 
+    Widget? fab = floatingActionButton;
+    final scaffoldIsLetterboxed = !extend && !_hasCustomBackground;
+    if (fab != null &&
+        !scaffoldIsLetterboxed &&
+        applyBottom &&
+        bottomNavigationBar == null) {
+      final fabBottom = SmartSafeAreaInsets.of(
+        context,
+        applyTop: false,
+        applyLeft: false,
+        applyRight: false,
+        applyBottom: true,
+        bottomBehavior: behavior,
+        threeButtonNavThreshold: threeButtonNavThreshold,
+        extraPadding: extra,
+        minimum: minimum,
+        keyboardAware: keyboardAware,
+      ).contentBottom;
+      if (fabBottom > 0) {
+        fab = Padding(
+          padding: EdgeInsets.only(bottom: fabBottom),
+          child: fab,
+        );
+      }
+    }
+
     final scaffold = Scaffold(
       primary: primary,
       appBar: appBar,
       body: bodyWidget,
       backgroundColor:
           _hasCustomBackground ? Colors.transparent : backgroundColor,
-      floatingActionButton: floatingActionButton,
+      floatingActionButton: fab,
       floatingActionButtonLocation: floatingActionButtonLocation,
       bottomNavigationBar: nav,
       drawer: drawer,
