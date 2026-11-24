@@ -240,10 +240,7 @@ flutter run
 
 ## Issues
 
-Report bugs and device-specific layout issues at
-[talhadevs/smart_safe_area](https://github.com/talhadevs/smart_safe_area/issues).
-
-Include device model, OS version, navigation mode, Flutter version, and a screenshot when you can.
+Report bugs at [TalhaRiazH/smart_safe_area](https://github.com/TalhaRiazH/smart_safe_area/issues).
 
 ## License
 
