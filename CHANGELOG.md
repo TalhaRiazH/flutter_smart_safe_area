@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.5
+
+* Add grouped pub.dev screenshots for full screen, bottom navigation, and status bar.
+* Document that `auto` is the default and needs no extra parameters.
+
 ## 0.1.4
 
 * Translucent top/bottom/left/right safe-area colors no longer consume padding, so lists can scroll behind them.

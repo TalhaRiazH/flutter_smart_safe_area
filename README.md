@@ -9,6 +9,26 @@ A smarter, drop-in Flutter `SafeArea` for handling **Android 3-button navigation
 
 `flutter_smart_safe_area` keeps your backgrounds edge-to-edge while automatically protecting buttons, text, lists, and other interactive content when a real system navigation bar is present.
 
+**Leave it on `auto`.** That is the default. You do not pass extra parameters. Wrap the app with `SmartSafeAreaHost` and build screens with `SmartSafeAreaScaffold` — the package detects 3-button vs gesture vs the iPhone home indicator and applies the correct safe area for you.
+
+### Full screen
+
+On `auto`, content and the tab bar lift above Android 3-button navigation, and stay flush on gesture devices and iPhone.
+
+![Full screen 3-button vs gesture](screenshots/group_full.jpg)
+
+### Bottom navigation
+
+The tab bar moves only when a system navigation bar is present. On gesture navigation it stays flush with the home indicator. With a translucent fill, lists can scroll behind the bar.
+
+![Bottom navigation 3-button, gesture, and scroll behind](screenshots/group_bottom_nav.jpg)
+
+### Status bar
+
+Paint the top inset, or leave it clear. A translucent color lets the list slide behind the status bar; an inset layout keeps content below it.
+
+![Status bar list behind vs content inset](screenshots/group_status_bar.jpg)
+
 ## Why flutter_smart_safe_area?
 
 Flutter's standard `SafeArea` treats every bottom system inset the same.
@@ -116,16 +136,20 @@ class HomeScreen extends StatelessWidget {
 
 ## Bottom Safe Area Behavior
 
+`auto` is the default. You can omit `bottomBehavior` entirely — no extra parameters are required.
+
 | Behavior | 3-button | Gesture |
 | --- | --- | --- |
 | `auto` (default) | Inset | No inset |
 | `always` | Inset | Inset |
 | `never` | No inset | No inset |
 
+Override only if you need a different policy:
+
 ```dart
 SmartSafeAreaHost(
   config: const SmartSafeAreaConfig(
-    bottomBehavior: BottomSafeAreaBehavior.auto,
+    bottomBehavior: BottomSafeAreaBehavior.always, // or .never
   ),
   child: child,
 )

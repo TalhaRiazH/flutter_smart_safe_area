@@ -1,6 +1,6 @@
 name: flutter_smart_safe_area
-description: Smart SafeArea that detects 3-button vs gesture navigation. Backgrounds stay edge-to-edge; content insets only when the system nav bar is visible.
-version: 0.1.4
+description: Smart SafeArea that auto-detects 3-button vs gesture navigation. Leave auto on — no extra parameters. Backgrounds stay edge-to-edge; content insets only when needed.
+version: 0.1.5
 homepage: https://github.com/TalhaRiazH/flutter_smart_safe_area
 repository: https://github.com/TalhaRiazH/flutter_smart_safe_area
 issue_tracker: https://github.com/TalhaRiazH/flutter_smart_safe_area/issues
@@ -11,6 +11,14 @@ topics:
   - navigation-bar
   - android
   - ios
+
+screenshots:
+  - description: Auto handles 3-button vs gesture. Full screen — content lifts on 3-button and stays flush on gesture.
+    path: screenshots/group_full.jpg
+  - description: Auto bottom navigation. Tab bar lifts on 3-button, stays flush on gesture, and lists can scroll behind.
+    path: screenshots/group_bottom_nav.jpg
+  - description: Auto status bar. Translucent fill with the list behind it, or content inset below the status bar.
+    path: screenshots/group_status_bar.jpg
 
 environment:
   sdk: ^3.5.0
