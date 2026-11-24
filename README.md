@@ -1,4 +1,18 @@
-# flutter_smart_safe_area
+# It handles safe areas automatically
+
+You do not set it up screen by screen. It handles the safe area on its own.
+
+**Full screen.** On 3-button phones the content and tab bar move up. On gesture phones and iPhone they stay flush.
+
+![Full screen. 3-button lifts content. Gesture stays flush.](screenshots/group_full.jpg)
+
+**Bottom navigation.** The tab bar moves only when the phone has 3 buttons. A see-through color lets the list scroll behind it.
+
+![Bottom navigation. 3-button, gesture, and scroll behind.](screenshots/group_bottom_nav.jpg)
+
+**Status bar.** Color the area behind the clock, or keep content below it.
+
+![Status bar. List behind the clock, or content kept below it.](screenshots/group_status_bar.jpg)
 
 [![pub package](https://img.shields.io/pub/v/flutter_smart_safe_area.svg)](https://pub.dev/packages/flutter_smart_safe_area)
 [![likes](https://img.shields.io/pub/likes/flutter_smart_safe_area)](https://pub.dev/packages/flutter_smart_safe_area/score)
@@ -27,24 +41,6 @@ This package **looks at the phone and decides for you**:
 ## It is automatic
 
 The default mode is **`auto`**. You do **not** need to set any parameters, and you do **not** need to replace your `Scaffold`. Add the package, do the two steps below, and it works.
-
-### Full screen
-
-On `auto`, content and the tab bar move up on 3-button phones and stay at the bottom on gesture phones.
-
-![Full screen 3-button vs gesture](screenshots/group_full.jpg)
-
-### Bottom navigation
-
-The tab bar only moves when the phone has 3 buttons. With a see-through color, the list can scroll behind the tab bar.
-
-![Bottom navigation 3-button, gesture, and scroll behind](screenshots/group_bottom_nav.jpg)
-
-### Status bar
-
-You can color the top area (where the clock and battery are). A see-through color lets the list slide behind it.
-
-![Status bar list behind vs content inset](screenshots/group_status_bar.jpg)
 
 ---
 

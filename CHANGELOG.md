@@ -5,6 +5,7 @@ All notable changes to this project are documented in this file.
 ## 0.1.7
 
 * Document that a normal `Scaffold` is enough after `SmartSafeAreaHost`. `SmartSafeAreaScaffold` is only for extra options such as colors and opacity.
+* Put a large “handles safe areas automatically” heading and the screenshots in the README body.
 
 ## 0.1.6
 

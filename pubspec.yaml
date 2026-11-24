@@ -12,14 +12,6 @@ topics:
   - android
   - ios
 
-screenshots:
-  - description: Auto handles 3-button vs gesture. Full screen — content lifts on 3-button and stays flush on gesture.
-    path: screenshots/group_full.jpg
-  - description: Auto bottom navigation. Tab bar lifts on 3-button, stays flush on gesture, and lists can scroll behind.
-    path: screenshots/group_bottom_nav.jpg
-  - description: Auto status bar. Translucent fill with the list behind it, or content inset below the status bar.
-    path: screenshots/group_status_bar.jpg
-
 environment:
   sdk: ^3.5.0
   flutter: ">=3.24.0"
