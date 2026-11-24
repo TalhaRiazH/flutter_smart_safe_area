@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.6
+
+* Rewrite the README in plain language: 3-step setup, copy-paste recipes, and a parameter table with defaults.
+* Simplify the example app to a commented list + tab bar on `auto`.
+
 ## 0.1.5
 
 * Add grouped pub.dev screenshots for full screen, bottom navigation, and status bar.

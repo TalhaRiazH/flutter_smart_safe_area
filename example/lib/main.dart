@@ -3,226 +3,110 @@ import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Step 1: let the app draw behind the status bar and navigation bar.
   await SmartSafeAreaHost.ensureEdgeToEdge();
+
   runApp(const SmartSafeAreaExampleApp());
 }
 
-class SmartSafeAreaExampleApp extends StatefulWidget {
+class SmartSafeAreaExampleApp extends StatelessWidget {
   const SmartSafeAreaExampleApp({super.key});
-
-  @override
-  State<SmartSafeAreaExampleApp> createState() =>
-      _SmartSafeAreaExampleAppState();
-}
-
-class _SmartSafeAreaExampleAppState extends State<SmartSafeAreaExampleApp> {
-  bool _extendBackground = true;
-  BottomSafeAreaBehavior _behavior = BottomSafeAreaBehavior.auto;
-  SimulatedSystemNav _simulated = SimulatedSystemNav.device;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        colorSchemeSeed: const Color(0xFF6EA8FF),
-      ),
-      builder: (context, child) {
-        return SmartSafeAreaHost(
-          config: SmartSafeAreaConfig(
-            extendBackground: _extendBackground,
-            bottomBehavior: _behavior,
-          ),
-          showDebugOverlay: true,
-          child: SmartSafeAreaSimulator(
-            nav: _simulated,
-            top: _simulated == SimulatedSystemNav.device ? null : 47,
-            child: child ?? const SizedBox.shrink(),
-          ),
-        );
-      },
-      home: _HomeScreen(
-        extendBackground: _extendBackground,
-        behavior: _behavior,
-        simulated: _simulated,
-        onExtendBackground: (value) {
-          setState(() => _extendBackground = value);
-        },
-        onBehavior: (value) {
-          setState(() => _behavior = value);
-        },
-        onSimulated: (value) {
-          setState(() => _simulated = value);
-        },
-      ),
+      theme: ThemeData(brightness: Brightness.dark),
+
+      // Step 2: turn the package on for the whole app.
+      // No settings needed. It runs on `auto`.
+      builder: SmartSafeAreaHost.materialBuilder(),
+
+      home: const HomeScreen(),
     );
   }
 }
 
-class _HomeScreen extends StatelessWidget {
-  const _HomeScreen({
-    required this.extendBackground,
-    required this.behavior,
-    required this.simulated,
-    required this.onExtendBackground,
-    required this.onBehavior,
-    required this.onSimulated,
-  });
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
-  final bool extendBackground;
-  final BottomSafeAreaBehavior behavior;
-  final SimulatedSystemNav simulated;
-  final ValueChanged<bool> onExtendBackground;
-  final ValueChanged<BottomSafeAreaBehavior> onBehavior;
-  final ValueChanged<SimulatedSystemNav> onSimulated;
+  static const _tabBarColor = Color(0xFF12263A);
+
+  static const _tiles = <(String, Color)>[
+    ('Coral', Color(0xFFFF6B6B)),
+    ('Sunset', Color(0xFFFF8C42)),
+    ('Gold', Color(0xFFFFD166)),
+    ('Lime', Color(0xFF9BE564)),
+    ('Mint', Color(0xFF2EC4B6)),
+    ('Sky', Color(0xFF4D96FF)),
+    ('Violet', Color(0xFF7B61FF)),
+    ('Pink', Color(0xFFFF5DA2)),
+    ('Rose', Color(0xFFE85D75)),
+    ('Teal', Color(0xFF00A896)),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final insets = context.smartSafeArea;
-
+    // Step 3: use SmartSafeAreaScaffold instead of Scaffold.
     return SmartSafeAreaScaffold(
-      extendBackground: extendBackground,
-      bottomBehavior: behavior,
-      letterboxColor: const Color(0xFF05070D),
-      backgroundColor: const Color(0xFF10203A),
-      backgroundGradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Color(0xFF2B4C7E),
-          Color(0xFF10203A),
-          Color(0xFF0A1220),
-        ],
-      ),
-      bottomNavigationBar: const _DemoTabBar(),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        children: [
-          Text(
-            'flutter_smart_safe_area',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Background stays edge-to-edge. Buttons, text, and images inset '
-            'only when 3-button system navigation is showing.',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16),
-          _InfoCard(
-            title: 'Detected',
-            rows: [
-              ('Nav mode', insets.navMode.name),
-              ('Raw bottom', '${insets.rawBottom.toStringAsFixed(0)} dp'),
-              (
-                'Content bottom',
-                '${insets.contentBottom.toStringAsFixed(0)} dp'
+      // Fills the whole screen, even behind the system bars.
+      backgroundColor: const Color(0xFF1B4F72),
+
+      // Optional: color the area behind the clock and battery.
+      topSafeAreaColor: const Color(0xFFFF8C42),
+
+      // Optional: color the area behind Back / Home / Recents.
+      // Matching the tab bar makes them look like one bar.
+      bottomSafeAreaColor: _tabBarColor,
+
+      // Moves up on 3-button phones, stays at the bottom on gesture phones.
+      bottomNavigationBar: const _TabBar(color: _tabBarColor),
+
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: _tiles.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final (name, color) = _tiles[index];
+          return Container(
+            height: 88,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
               ),
-              ('Top inset', '${insets.content.top.toStringAsFixed(0)} dp'),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _Panel(
-            title: 'Simulate a device',
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final nav in SimulatedSystemNav.values)
-                  ChoiceChip(
-                    label: Text(nav.name),
-                    selected: simulated == nav,
-                    onSelected: (_) => onSimulated(nav),
-                  ),
-              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          _Panel(
-            title: 'Background behind system nav',
-            child: SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('extendBackground'),
-              subtitle: Text(
-                extendBackground
-                    ? 'Color / gradient can sit behind the system nav'
-                    : 'Everything, including the background, is inset',
-              ),
-              value: extendBackground,
-              onChanged: onExtendBackground,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _Panel(
-            title: 'Bottom behavior',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final value in BottomSafeAreaBehavior.values)
-                      ChoiceChip(
-                        label: Text(value.name),
-                        selected: behavior == value,
-                        onSelected: (_) => onBehavior(value),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(_behaviorHint(behavior)),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.check_circle_outline),
-            label: const Text('Sample button (content, so it is inset)'),
-          ),
-          const SizedBox(height: 12),
-          const Card(
-            child: ListTile(
-              leading: Icon(Icons.image_outlined),
-              title: Text('Sample image / card'),
-              subtitle: Text('In-screen elements stay in the safe region'),
-            ),
-          ),
-          const SizedBox(height: 24),
-        ],
+          );
+        },
       ),
     );
   }
-
-  String _behaviorHint(BottomSafeAreaBehavior value) {
-    return switch (value) {
-      BottomSafeAreaBehavior.auto =>
-        '3-button: inset. Gesture: flush with the edge.',
-      BottomSafeAreaBehavior.always => 'Always apply the raw bottom inset.',
-      BottomSafeAreaBehavior.never => 'Never apply a bottom inset.',
-    };
-  }
 }
 
-class _DemoTabBar extends StatelessWidget {
-  const _DemoTabBar();
+class _TabBar extends StatelessWidget {
+  const _TabBar({required this.color});
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return const ColoredBox(
-      color: Color(0xFF15233A),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
+    return ColoredBox(
+      color: color,
+      child: const SizedBox(
+        height: 80,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _TabIcon(icon: Icons.home_outlined, label: 'Home'),
-            _TabIcon(icon: Icons.explore_outlined, label: 'Explore'),
-            _TabIcon(icon: Icons.settings_outlined, label: 'Settings'),
+            _Tab(icon: Icons.home_outlined, label: 'Home'),
+            _Tab(icon: Icons.explore_outlined, label: 'Explore'),
+            _Tab(icon: Icons.settings_outlined, label: 'Settings'),
           ],
         ),
       ),
@@ -230,83 +114,22 @@ class _DemoTabBar extends StatelessWidget {
   }
 }
 
-class _TabIcon extends StatelessWidget {
-  const _TabIcon({required this.icon, required this.label});
+class _Tab extends StatelessWidget {
+  const _Tab({required this.icon, required this.label});
 
   final IconData icon;
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 22),
-        const SizedBox(height: 4),
-        Text(label, style: Theme.of(context).textTheme.labelSmall),
-      ],
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({required this.title, required this.rows});
-
-  final String title;
-  final List<(String, String)> rows;
-
-  @override
-  Widget build(BuildContext context) {
-    return _Panel(
-      title: title,
+    return Expanded(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          for (final row in rows)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Expanded(child: Text(row.$1)),
-                  Text(
-                    row.$2,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
+          Icon(icon, size: 30),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         ],
-      ),
-    );
-  }
-}
-
-class _Panel extends StatelessWidget {
-  const _Panel({required this.title, required this.child});
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.28),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white24),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              child,
-            ],
-          ),
-        ),
       ),
     );
   }
