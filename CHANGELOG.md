@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.12
+
+* Declare Android and iOS as the supported platforms.
+
 ## 0.1.11
 
 * Show the README screenshots from public image links.
