@@ -4,15 +4,15 @@ You do not set it up screen by screen. It handles the safe area on its own.
 
 **Full screen.** On 3-button phones the content and tab bar move up. On gesture phones and iPhone they stay flush.
 
-![Full screen. 3-button lifts content. Gesture stays flush.](screenshots/group_full.jpg)
+![Full screen. 3-button lifts content. Gesture stays flush.](https://raw.githubusercontent.com/TalhaRiazH/flutter_smart_safe_area_images/main/screenshots/group_full.jpg)
 
 **Bottom navigation.** The tab bar moves only when the phone has 3 buttons. A see-through color lets the list scroll behind it.
 
-![Bottom navigation. 3-button, gesture, and scroll behind.](screenshots/group_bottom_nav.jpg)
+![Bottom navigation. 3-button, gesture, and scroll behind.](https://raw.githubusercontent.com/TalhaRiazH/flutter_smart_safe_area_images/main/screenshots/group_bottom_nav.jpg)
 
 **Status bar.** Color the area behind the clock, or keep content below it.
 
-![Status bar. List behind the clock, or content kept below it.](screenshots/group_status_bar.jpg)
+![Status bar. List behind the clock, or content kept below it.](https://raw.githubusercontent.com/TalhaRiazH/flutter_smart_safe_area_images/main/screenshots/group_status_bar.jpg)
 
 [![pub package](https://img.shields.io/pub/v/flutter_smart_safe_area.svg)](https://pub.dev/packages/flutter_smart_safe_area)
 [![likes](https://img.shields.io/pub/likes/flutter_smart_safe_area)](https://pub.dev/packages/flutter_smart_safe_area/score)

@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.11
+
+* Show the README screenshots from public image links.
+
 ## 0.1.10
 
 * List Talha Riaz as the package author.
