@@ -1,11 +1,11 @@
 ---
-description: GitHub identity for smart_safe_area
+description: GitHub identity for flutter_smart_safe_area
 alwaysApply: true
 ---
 
-# GitHub identity (smart_safe_area)
+# GitHub identity (flutter_smart_safe_area)
 
-- GitHub repo: **https://github.com/TalhaRiazH/smart_safe_area**
+- GitHub repo: **https://github.com/TalhaRiazH/flutter_smart_safe_area**
 - GitHub account for push: **TalhaRiazH**
 - Commit author email: **talhariaz772@gmail.com** only.
 - Never use `talhaarif.devs@gmail.com`, **talhadevs**, or any other email or GitHub account on this project.

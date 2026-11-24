@@ -1,10 +1,10 @@
-# smart_safe_area example
+# flutter_smart_safe_area example
 
 Minimal app-level setup:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:smart_safe_area/smart_safe_area.dart';
+import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

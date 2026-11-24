@@ -1,5 +1,5 @@
 name: smart_safe_area_example
-description: Example app for the smart_safe_area package.
+description: Example app for the flutter_smart_safe_area package.
 publish_to: "none"
 version: 1.0.0+1
 
@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  smart_safe_area:
+  flutter_smart_safe_area:
     path: ../
 
 dev_dependencies:

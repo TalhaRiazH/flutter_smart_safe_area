@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smart_safe_area/smart_safe_area.dart';
+import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

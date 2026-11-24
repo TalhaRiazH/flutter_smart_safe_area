@@ -62,6 +62,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  flutter_smart_safe_area:
+    dependency: "direct main"
+    description:
+      path: ".."
+      relative: true
+    source: path
+    version: "0.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -136,13 +143,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  smart_safe_area:
-    dependency: "direct main"
-    description:
-      path: ".."
-      relative: true
-    source: path
-    version: "0.1.0"
   source_span:
     dependency: transitive
     description:

@@ -1,15 +1,15 @@
-# smart_safe_area
+# flutter_smart_safe_area
 
-[![pub package](https://img.shields.io/pub/v/smart_safe_area.svg)](https://pub.dev/packages/smart_safe_area)
-[![likes](https://img.shields.io/pub/likes/smart_safe_area)](https://pub.dev/packages/smart_safe_area/score)
-[![pub points](https://img.shields.io/pub/points/smart_safe_area)](https://pub.dev/packages/smart_safe_area/score)
+[![pub package](https://img.shields.io/pub/v/flutter_smart_safe_area.svg)](https://pub.dev/packages/flutter_smart_safe_area)
+[![likes](https://img.shields.io/pub/likes/flutter_smart_safe_area)](https://pub.dev/packages/flutter_smart_safe_area/score)
+[![pub points](https://img.shields.io/pub/points/flutter_smart_safe_area)](https://pub.dev/packages/flutter_smart_safe_area/score)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A smarter, drop-in Flutter `SafeArea` for handling **Android 3-button navigation, gesture navigation, and iPhone home indicators** without unwanted bottom gaps.
 
-`smart_safe_area` keeps your backgrounds edge-to-edge while automatically protecting buttons, text, lists, and other interactive content when a real system navigation bar is present.
+`flutter_smart_safe_area` keeps your backgrounds edge-to-edge while automatically protecting buttons, text, lists, and other interactive content when a real system navigation bar is present.
 
-## Why smart_safe_area?
+## Why flutter_smart_safe_area?
 
 Flutter's standard `SafeArea` treats every bottom system inset the same.
 
@@ -21,7 +21,7 @@ That can lead to:
 * inconsistent layouts between Android and iOS
 * extra platform-specific safe-area code
 
-`smart_safe_area` detects the navigation mode and applies the correct behavior:
+`flutter_smart_safe_area` detects the navigation mode and applies the correct behavior:
 
 | Device | System navigation | Content | Background |
 | --- | --- | --- | --- |
@@ -42,7 +42,7 @@ That can lead to:
 ## Installation
 
 ```bash
-flutter pub add smart_safe_area
+flutter pub add flutter_smart_safe_area
 ```
 
 ## Quick Start
@@ -51,7 +51,7 @@ flutter pub add smart_safe_area
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:smart_safe_area/smart_safe_area.dart';
+import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -240,10 +240,10 @@ flutter run
 
 ## Issues
 
-Report bugs at [TalhaRiazH/smart_safe_area](https://github.com/TalhaRiazH/smart_safe_area/issues).
+Report bugs at [TalhaRiazH/flutter_smart_safe_area](https://github.com/TalhaRiazH/flutter_smart_safe_area/issues).
 
 ## License
 
-`smart_safe_area` is available under the [MIT License](LICENSE).
+`flutter_smart_safe_area` is available under the [MIT License](LICENSE).
 
-API reference (after publish): [smart_safe_area](https://pub.dev/documentation/smart_safe_area/latest/).
+API reference (after publish): [flutter_smart_safe_area](https://pub.dev/documentation/flutter_smart_safe_area/latest/).

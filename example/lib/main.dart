@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_safe_area/smart_safe_area.dart';
+import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,7 +100,7 @@ class _HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         children: [
           Text(
-            'smart_safe_area',
+            'flutter_smart_safe_area',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
