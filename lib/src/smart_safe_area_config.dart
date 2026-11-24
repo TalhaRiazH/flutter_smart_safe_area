@@ -12,6 +12,8 @@ import 'system_nav.dart';
 @immutable
 class SmartSafeAreaConfig {
   /// Creates a configuration. All values have production-safe defaults.
+  ///
+  /// At least one of [applyOnAndroid] or [applyOnIOS] must be `true`.
   const SmartSafeAreaConfig({
     this.bottomBehavior = BottomSafeAreaBehavior.auto,
     this.extendBackground = true,
@@ -19,6 +21,8 @@ class SmartSafeAreaConfig {
     this.applyLeft = true,
     this.applyRight = true,
     this.applyBottom = true,
+    this.applyOnAndroid = true,
+    this.applyOnIOS = true,
     this.threeButtonNavThreshold = SystemNav.defaultThreeButtonThreshold,
     this.minimum = EdgeInsets.zero,
     this.extraPadding = EdgeInsets.zero,
@@ -26,7 +30,10 @@ class SmartSafeAreaConfig {
     this.adaptExistingSafeArea = true,
     this.enableEdgeToEdge = true,
     this.letterboxColor,
-  });
+  }) : assert(
+          applyOnAndroid || applyOnIOS,
+          'At least one of applyOnAndroid or applyOnIOS must be true.',
+        );
 
   /// Package defaults used when no [SmartSafeAreaScope] is above the widget.
   static const SmartSafeAreaConfig defaults = SmartSafeAreaConfig();
@@ -57,6 +64,33 @@ class SmartSafeAreaConfig {
   ///
   /// Combined with [bottomBehavior] to decide the actual content padding.
   final bool applyBottom;
+
+  /// When `true` (default), smart insets apply on Android.
+  ///
+  /// Set to `false` to leave Android layouts unchanged. At least one of
+  /// [applyOnAndroid] or [applyOnIOS] must stay `true`.
+  final bool applyOnAndroid;
+
+  /// When `true` (default), smart insets apply on iOS.
+  ///
+  /// Set to `false` to leave iPhone / iPad layouts unchanged. At least one of
+  /// [applyOnAndroid] or [applyOnIOS] must stay `true`.
+  final bool applyOnIOS;
+
+  /// Whether this config applies on [platform].
+  ///
+  /// Android and iOS follow [applyOnAndroid] / [applyOnIOS]. Other platforms
+  /// (web desktop, macOS, Windows, Linux) stay enabled.
+  bool appliesTo(TargetPlatform platform) {
+    return switch (platform) {
+      TargetPlatform.android => applyOnAndroid,
+      TargetPlatform.iOS => applyOnIOS,
+      _ => true,
+    };
+  }
+
+  /// Whether this config applies on the current [defaultTargetPlatform].
+  bool get appliesToCurrentPlatform => appliesTo(defaultTargetPlatform);
 
   /// Minimum bottom inset treated as 3-button navigation. Defaults to `40`.
   final double threeButtonNavThreshold;
@@ -94,6 +128,8 @@ class SmartSafeAreaConfig {
     bool? applyLeft,
     bool? applyRight,
     bool? applyBottom,
+    bool? applyOnAndroid,
+    bool? applyOnIOS,
     double? threeButtonNavThreshold,
     EdgeInsets? minimum,
     EdgeInsets? extraPadding,
@@ -110,6 +146,8 @@ class SmartSafeAreaConfig {
       applyLeft: applyLeft ?? this.applyLeft,
       applyRight: applyRight ?? this.applyRight,
       applyBottom: applyBottom ?? this.applyBottom,
+      applyOnAndroid: applyOnAndroid ?? this.applyOnAndroid,
+      applyOnIOS: applyOnIOS ?? this.applyOnIOS,
       threeButtonNavThreshold:
           threeButtonNavThreshold ?? this.threeButtonNavThreshold,
       minimum: minimum ?? this.minimum,
@@ -133,6 +171,8 @@ class SmartSafeAreaConfig {
         other.applyLeft == applyLeft &&
         other.applyRight == applyRight &&
         other.applyBottom == applyBottom &&
+        other.applyOnAndroid == applyOnAndroid &&
+        other.applyOnIOS == applyOnIOS &&
         other.threeButtonNavThreshold == threeButtonNavThreshold &&
         other.minimum == minimum &&
         other.extraPadding == extraPadding &&
@@ -150,6 +190,8 @@ class SmartSafeAreaConfig {
         applyLeft,
         applyRight,
         applyBottom,
+        applyOnAndroid,
+        applyOnIOS,
         threeButtonNavThreshold,
         minimum,
         extraPadding,

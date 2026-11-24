@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.1
+
+* Add `applyOnAndroid` and `applyOnIOS` so you can turn the package off on one platform.
+* At least one of those flags must stay `true`. When a platform is disabled, insets, MediaQuery adaptation, and edge-to-edge overlay are skipped there.
+
 ## 0.1.0
 
 * Initial release of `flutter_smart_safe_area`.

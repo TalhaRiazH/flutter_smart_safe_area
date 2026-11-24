@@ -38,6 +38,7 @@ That can lead to:
 * App-wide configuration, including sides and keyboard inset
 * Smart bottom navigation bar support
 * Simulator for desktop and iOS Simulator testing
+* Enable Android, iOS, or both (at least one platform is required)
 
 ## Installation
 
@@ -123,6 +124,27 @@ SmartSafeAreaHost(
 )
 ```
 
+## Android and iOS
+
+Both platforms are on by default. Turn one off when you only want the package on the other. At least one must stay enabled.
+
+```dart
+SmartSafeAreaHost(
+  config: const SmartSafeAreaConfig(
+    applyOnAndroid: true,
+    applyOnIOS: false, // no-op on iPhone / iPad
+  ),
+  child: child,
+)
+```
+
+| Flags | Android | iOS |
+| --- | --- | --- |
+| `applyOnAndroid: true`, `applyOnIOS: true` (default) | Applied | Applied |
+| `applyOnAndroid: true`, `applyOnIOS: false` | Applied | Unchanged |
+| `applyOnAndroid: false`, `applyOnIOS: true` | Unchanged | Applied |
+| both `false` | Not allowed | Not allowed |
+
 ## Inset the Background Too
 
 ```dart
@@ -168,6 +190,8 @@ MaterialApp(
       applyBottom: true,
       applyLeft: true,
       applyRight: true,
+      applyOnAndroid: true,
+      applyOnIOS: true,
       keyboardAware: false,
       adaptExistingSafeArea: true,
       enableEdgeToEdge: true,
@@ -181,6 +205,7 @@ MaterialApp(
 | `extendBackground` | Backgrounds draw into system areas |
 | `bottomBehavior` | Bottom inset policy |
 | `applyTop` / `applyBottom` / `applyLeft` / `applyRight` | Which sides to inset |
+| `applyOnAndroid` / `applyOnIOS` | Which platforms the package applies on (at least one required) |
 | `keyboardAware` | Bottom inset is at least the keyboard height |
 | `adaptExistingSafeArea` | Flutter `SafeArea` uses the smart inset |
 | `enableEdgeToEdge` | Transparent system bars |

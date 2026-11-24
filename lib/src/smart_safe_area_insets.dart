@@ -93,6 +93,15 @@ class SmartSafeAreaInsets {
       threshold: resolved.threeButtonNavThreshold,
     );
 
+    if (!resolved.appliesToCurrentPlatform) {
+      return SmartSafeAreaInsets(
+        navMode: navMode,
+        raw: raw,
+        content: EdgeInsets.zero,
+        config: resolved,
+      );
+    }
+
     final smartBottom = _resolveBottom(
       rawBottom: rawBottom,
       behavior: resolved.bottomBehavior,

@@ -108,6 +108,10 @@ class SmartSafeAreaHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!config.appliesToCurrentPlatform) {
+      return SmartSafeAreaScope(config: config, child: child);
+    }
+
     Widget built = SmartSafeAreaScope(
       config: config,
       child: _MediaQueryAdapter(

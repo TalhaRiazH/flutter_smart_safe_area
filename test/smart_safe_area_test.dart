@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
@@ -106,6 +107,112 @@ void main() {
       );
 
       expect(insets.contentBottom, 0);
+    });
+  });
+
+  group('Platform enable flags', () {
+    test('requires at least one of Android or iOS', () {
+      expect(
+        () => SmartSafeAreaConfig(
+          applyOnAndroid: false,
+          applyOnIOS: false,
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    testWidgets('skips content insets on Android when applyOnAndroid is false',
+        (tester) async {
+      late SmartSafeAreaInsets insets;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        await tester.pumpWidget(
+          _harness(
+            viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+            config: const SmartSafeAreaConfig(
+              applyOnAndroid: false,
+              applyOnIOS: true,
+            ),
+            child: Builder(
+              builder: (context) {
+                insets = SmartSafeAreaInsets.of(context);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+
+        expect(insets.content, EdgeInsets.zero);
+        expect(insets.rawBottom, 48);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('applies content insets on iOS when only iOS is enabled',
+        (tester) async {
+      late SmartSafeAreaInsets insets;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        await tester.pumpWidget(
+          _harness(
+            viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+            config: const SmartSafeAreaConfig(
+              applyOnAndroid: false,
+              applyOnIOS: true,
+            ),
+            child: Builder(
+              builder: (context) {
+                insets = SmartSafeAreaInsets.of(context);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+
+        expect(insets.content.top, 47);
+        expect(insets.content.bottom, 48);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets('host does not rewrite MediaQuery when Android is disabled',
+        (tester) async {
+      late EdgeInsets padding;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  viewPadding: const EdgeInsets.only(top: 47, bottom: 34),
+                  padding: const EdgeInsets.only(top: 47, bottom: 34),
+                ),
+                child: SmartSafeAreaHost(
+                  config: const SmartSafeAreaConfig(
+                    applyOnAndroid: false,
+                    applyOnIOS: true,
+                  ),
+                  child: child ?? const SizedBox.shrink(),
+                ),
+              );
+            },
+            home: Builder(
+              builder: (context) {
+                padding = MediaQuery.paddingOf(context);
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+
+        expect(padding.bottom, 34);
+        expect(padding.top, 47);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     });
   });
 

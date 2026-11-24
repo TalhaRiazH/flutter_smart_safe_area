@@ -16,7 +16,6 @@ class TestSafeAreaApp extends StatefulWidget {
 
 class _TestSafeAreaAppState extends State<TestSafeAreaApp> {
   bool _extendBackground = true;
-  BottomSafeAreaBehavior _behavior = BottomSafeAreaBehavior.auto;
   SimulatedSystemNav _simulated = SimulatedSystemNav.device;
 
   @override
@@ -34,7 +33,7 @@ class _TestSafeAreaAppState extends State<TestSafeAreaApp> {
           child: SmartSafeAreaHost(
             config: SmartSafeAreaConfig(
               extendBackground: _extendBackground,
-              bottomBehavior: _behavior,
+              bottomBehavior: BottomSafeAreaBehavior.auto,
             ),
             showDebugOverlay: true,
             child: child ?? const SizedBox.shrink(),
@@ -43,13 +42,9 @@ class _TestSafeAreaAppState extends State<TestSafeAreaApp> {
       },
       home: _HomeScreen(
         extendBackground: _extendBackground,
-        behavior: _behavior,
         simulated: _simulated,
         onExtendBackground: (value) {
           setState(() => _extendBackground = value);
-        },
-        onBehavior: (value) {
-          setState(() => _behavior = value);
         },
         onSimulated: (value) {
           setState(() => _simulated = value);
@@ -62,18 +57,14 @@ class _TestSafeAreaAppState extends State<TestSafeAreaApp> {
 class _HomeScreen extends StatelessWidget {
   const _HomeScreen({
     required this.extendBackground,
-    required this.behavior,
     required this.simulated,
     required this.onExtendBackground,
-    required this.onBehavior,
     required this.onSimulated,
   });
 
   final bool extendBackground;
-  final BottomSafeAreaBehavior behavior;
   final SimulatedSystemNav simulated;
   final ValueChanged<bool> onExtendBackground;
-  final ValueChanged<BottomSafeAreaBehavior> onBehavior;
   final ValueChanged<SimulatedSystemNav> onSimulated;
 
   @override
@@ -82,7 +73,7 @@ class _HomeScreen extends StatelessWidget {
 
     return SmartSafeAreaScaffold(
       extendBackground: extendBackground,
-      bottomBehavior: behavior,
+      bottomBehavior: BottomSafeAreaBehavior.auto,
       letterboxColor: const Color(0xFF05070D),
       backgroundColor: const Color(0xFF10203A),
       backgroundGradient: const LinearGradient(
@@ -110,14 +101,16 @@ class _HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Local Android test only. Not on pub.dev. Leave Simulate on '
-            '"device" and switch 3-button vs gesture in Android settings.',
+            'Local Android test only. Bottom safe area is auto: inset for '
+            '3-button, flush for gesture. Leave Simulate on "device" and '
+            'switch navigation in Android settings.',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 16),
           _InfoCard(
             title: 'Detected on this phone',
             rows: [
+              ('Bottom behavior', 'auto'),
               ('Nav mode', insets.navMode.name),
               ('Raw bottom', '${insets.rawBottom.toStringAsFixed(0)} dp'),
               (
@@ -158,29 +151,6 @@ class _HomeScreen extends StatelessWidget {
               onChanged: onExtendBackground,
             ),
           ),
-          const SizedBox(height: 12),
-          _Panel(
-            title: 'Bottom behavior',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final value in BottomSafeAreaBehavior.values)
-                      ChoiceChip(
-                        label: Text(value.name),
-                        selected: behavior == value,
-                        onSelected: (_) => onBehavior(value),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(_behaviorHint(behavior)),
-              ],
-            ),
-          ),
           const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: () {},
@@ -199,15 +169,6 @@ class _HomeScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _behaviorHint(BottomSafeAreaBehavior value) {
-    return switch (value) {
-      BottomSafeAreaBehavior.auto =>
-        '3-button: inset. Gesture: flush with the edge.',
-      BottomSafeAreaBehavior.always => 'Always apply the raw bottom inset.',
-      BottomSafeAreaBehavior.never => 'Never apply a bottom inset.',
-    };
   }
 }
 
