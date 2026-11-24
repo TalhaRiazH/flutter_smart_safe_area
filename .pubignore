@@ -19,6 +19,9 @@ example/.flutter-plugins
 example/.flutter-plugins-dependencies
 **/*.lock
 !pubspec.yaml
+# Local Android test app — GitHub only, never publish to pub.dev.
+test_safe_area/
+
 example/ios/Pods/
 example/macos/Pods/
 example/**/*.xcworkspace/xcuserdata/
