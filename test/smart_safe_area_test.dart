@@ -142,7 +142,8 @@ void main() {
           ),
         );
 
-        expect(insets.content, EdgeInsets.zero);
+        expect(insets.content.top, 47);
+        expect(insets.content.bottom, 48);
         expect(insets.rawBottom, 48);
       } finally {
         debugDefaultTargetPlatformOverride = null;
@@ -434,6 +435,112 @@ void main() {
       expect(padding.bottom, 48);
     });
 
+    testWidgets('drops the nav inset while the keyboard is open',
+        (tester) async {
+      late EdgeInsets padding;
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+                padding: const EdgeInsets.only(top: 47, bottom: 48),
+                viewInsets: const EdgeInsets.only(bottom: 300),
+              ),
+              child: SmartSafeAreaHost(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+          home: Builder(
+            builder: (context) {
+              padding = MediaQuery.paddingOf(context);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(padding.bottom, 0);
+      expect(padding.top, 47);
+    });
+
+    testWidgets('clears a stale 3-button inset when the live bottom is 0',
+        (tester) async {
+      final dpr = tester.view.devicePixelRatio;
+      tester.view.padding = FakeViewPadding(top: 47 * dpr);
+      tester.view.viewPadding = FakeViewPadding(top: 47 * dpr);
+      addTearDown(tester.view.reset);
+
+      late double contentBottom;
+      late SystemNavMode mode;
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                viewPadding: const EdgeInsets.only(top: 47, bottom: 48),
+                padding: const EdgeInsets.only(top: 47, bottom: 48),
+              ),
+              child: SmartSafeAreaHost(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+          home: Builder(
+            builder: (context) {
+              final insets = SmartSafeAreaInsets.of(context);
+              contentBottom = insets.contentBottom;
+              mode = insets.navMode;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      expect(mode, SystemNavMode.none);
+      expect(contentBottom, 0);
+    });
+
+    testWidgets('keeps screen state when the bottom inset changes',
+        (tester) async {
+      final padding = ValueNotifier<EdgeInsets>(
+        const EdgeInsets.only(top: 47, bottom: 48),
+      );
+      addTearDown(padding.dispose);
+
+      await tester.pumpWidget(
+        ValueListenableBuilder<EdgeInsets>(
+          valueListenable: padding,
+          builder: (context, insets, _) {
+            return MaterialApp(
+              builder: (context, child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    viewPadding: insets,
+                    padding: insets,
+                  ),
+                  child: SmartSafeAreaHost(
+                    child: child ?? const SizedBox.shrink(),
+                  ),
+                );
+              },
+              home: const _Counter(),
+            );
+          },
+        ),
+      );
+
+      await tester.tap(find.text('add'));
+      await tester.pump();
+      expect(find.text('1'), findsOneWidget);
+
+      padding.value = const EdgeInsets.only(top: 47, bottom: 34);
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+
     testWidgets('rebuilds after resume so system-nav changes are applied',
         (tester) async {
       late double bottom;
@@ -541,20 +648,27 @@ void main() {
 
   group('SmartSystemNavBar', () {
     testWidgets('adds a 3-button filler under the tab row', (tester) async {
+      late double childViewBottom;
       await tester.pumpWidget(
         _harness(
           viewPadding: const EdgeInsets.only(bottom: 48),
-          child: const Align(
+          child: Align(
             alignment: Alignment.bottomCenter,
             child: SmartSystemNavBar(
-              color: Color(0xFFFF0000),
-              child: SizedBox(height: 56, width: double.infinity),
+              color: const Color(0xFFFF0000),
+              child: Builder(
+                builder: (context) {
+                  childViewBottom = MediaQuery.viewPaddingOf(context).bottom;
+                  return const SizedBox(height: 56, width: double.infinity);
+                },
+              ),
             ),
           ),
         ),
       );
 
       expect(tester.getSize(find.byType(SmartSystemNavBar)).height, 104);
+      expect(childViewBottom, 0);
     });
 
     testWidgets('does not add filler on gesture devices', (tester) async {
@@ -649,6 +763,30 @@ void main() {
       expect(content, 48);
     });
   });
+}
+
+class _Counter extends StatefulWidget {
+  const _Counter();
+
+  @override
+  State<_Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<_Counter> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('$_count'),
+        TextButton(
+          onPressed: () => setState(() => _count += 1),
+          child: const Text('add'),
+        ),
+      ],
+    );
+  }
 }
 
 class _Capture extends StatefulWidget {

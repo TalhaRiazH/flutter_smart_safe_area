@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.8
+
+* Stop replacing the navigator when the system inset changes, so routes and screen state stay put.
+* Drop the bottom inset while the keyboard is open, so it is not stacked above the keyboard.
+* Apply a bottom-bar inset once. Material `BottomNavigationBar` and `NavigationBar` no longer get a second copy.
+* Trust a live inset of 0 when the status bar shows the view metrics are real, so a switch away from 3-button navigation can clear a stale inset.
+* On a disabled platform, keep Flutter's normal padding instead of removing every side.
+* Correct the README: a normal `Scaffold` updates `SafeArea` and `ListView`. Bottom bars belong in `SmartSafeAreaScaffold`.
+
 ## 0.1.7
 
 * Document that a normal `Scaffold` is enough after `SmartSafeAreaHost`. `SmartSafeAreaScaffold` is only for extra options such as colors and opacity.

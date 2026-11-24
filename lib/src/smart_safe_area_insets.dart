@@ -94,10 +94,18 @@ class SmartSafeAreaInsets {
     );
 
     if (!resolved.appliesToCurrentPlatform) {
+      // Disabled platforms keep Flutter's own padding. They are not cleared
+      // and they are not run through 3-button vs gesture detection.
+      final system = mq.padding;
       return SmartSafeAreaInsets(
         navMode: navMode,
         raw: raw,
-        content: EdgeInsets.zero,
+        content: EdgeInsets.fromLTRB(
+          resolved.applyLeft ? system.left : 0,
+          resolved.applyTop ? system.top : 0,
+          resolved.applyRight ? system.right : 0,
+          resolved.applyBottom ? system.bottom : 0,
+        ),
         config: resolved,
       );
     }
@@ -109,8 +117,18 @@ class SmartSafeAreaInsets {
       threshold: resolved.threeButtonNavThreshold,
     );
 
-    final keyboard = resolved.keyboardAware ? mq.viewInsets.bottom : 0.0;
-    final bottom = math.max(smartBottom, keyboard);
+    final keyboard = mq.viewInsets.bottom;
+    // The keyboard already covers the system nav. Leaving the nav inset in
+    // place would stack it on top of the keyboard. `keyboardAware` instead
+    // uses the keyboard height as the bottom inset.
+    final double bottom;
+    if (resolved.keyboardAware) {
+      bottom = math.max(smartBottom, keyboard);
+    } else if (keyboard > 0) {
+      bottom = 0;
+    } else {
+      bottom = smartBottom;
+    }
 
     final content = EdgeInsets.fromLTRB(
       _side(

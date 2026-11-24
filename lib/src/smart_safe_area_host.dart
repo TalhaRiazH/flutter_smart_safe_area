@@ -117,6 +117,8 @@ class SmartSafeAreaHost extends StatefulWidget {
 
 class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
     with WidgetsBindingObserver {
+  EdgeInsets? _appliedLivePadding;
+
   @override
   void initState() {
     super.initState();
@@ -142,6 +144,9 @@ class _SmartSafeAreaHostState extends State<SmartSafeAreaHost>
   @override
   void didChangeMetrics() {
     if (!mounted) return;
+    final live = SystemNav.liveViewPadding(context);
+    if (live == _appliedLivePadding) return;
+    _appliedLivePadding = live;
     setState(() {});
   }
 
@@ -214,7 +219,11 @@ class _MediaQueryAdapter extends StatelessWidget {
     var mq = MediaQuery.of(context);
     if (!SmartSafeAreaSimulationScope.lockedOf(context)) {
       final live = SystemNav.liveViewPadding(context);
-      if (live != null && (live.bottom > 0 || live.top > 0)) {
+      if (live != null &&
+          (live.bottom > 0 ||
+              live.top > 0 ||
+              live.left > 0 ||
+              live.right > 0)) {
         final staleBottom = (live.bottom - mq.viewPadding.bottom).abs() > 0.5;
         final staleTop = (live.top - mq.viewPadding.top).abs() > 0.5;
         if (staleBottom || staleTop) {
@@ -255,12 +264,7 @@ class _MediaQueryAdapter extends StatelessWidget {
           );
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(padding: nextPadding),
-            child: KeyedSubtree(
-              key: ValueKey(
-                'ssa-${insets.navMode.name}-${insets.rawBottom.toStringAsFixed(1)}',
-              ),
-              child: child,
-            ),
+            child: child,
           );
         },
       ),

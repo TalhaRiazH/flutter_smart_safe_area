@@ -35,7 +35,13 @@ abstract final class SystemNav {
     final live = liveViewPadding(context);
     if (live != null) {
       final stale = (live.bottom - mqBottom).abs() > 0.5;
-      if (stale && (live.bottom > 0 || mqBottom <= 0)) {
+      // A live status-bar or side inset means this view is reporting real
+      // metrics, so a bottom of 0 is a real gesture/none result — not a
+      // missing value. An all-zero live padding is ignored so an ancestor
+      // MediaQuery (tests, simulator) stays in charge.
+      final liveHasMetrics =
+          live.top > 0 || live.bottom > 0 || live.left > 0 || live.right > 0;
+      if (stale && (liveHasMetrics || mqBottom <= 0)) {
         return live.bottom;
       }
     }

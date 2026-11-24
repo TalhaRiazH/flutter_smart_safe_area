@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-**That's it.** Keep your normal `Scaffold`. You do not wrap screens with `SmartSafeAreaScaffold`.
+**That's it for content that already reads the safe area.** Keep your normal `Scaffold`. You do not wrap every screen with `SmartSafeAreaScaffold`.
 
 ```dart
 class HomeScreen extends StatelessWidget {
@@ -91,10 +91,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue,
-      bottomNavigationBar: MyTabBar(),
       body: ListView(
         children: const [
-          Text('This already follows auto.'),
+          Text('This list already follows auto.'),
         ],
       ),
     );
@@ -102,13 +101,18 @@ class HomeScreen extends StatelessWidget {
 }
 ```
 
-After Step 2, these already follow `auto`:
+After Step 2, these follow `auto`:
 
-* a normal `Scaffold` with a `bottomNavigationBar`
-* a `ListView`
-* Flutter's own `SafeArea`
+* Flutter's `SafeArea`
+* a `ListView` that does not set its own `padding`
+* Material 3 `NavigationBar` (it uses `SafeArea`)
 
-On a 3-button phone they move up. On a gesture phone or iPhone they stay flush. No extra widget, and no parameters.
+These do **not** follow `auto` by themselves:
+
+* Material `BottomNavigationBar` — it reads `viewPadding`, so a gesture phone still lifts the bar
+* a custom tab bar — `Scaffold` pins it to the bottom edge
+
+For those, put the bar in `SmartSafeAreaScaffold` (or wrap it with `SmartSystemNavBar`). The package then lifts it only on 3-button phones, once.
 
 ### Optional — `SmartSafeAreaScaffold` only for extra options
 
@@ -139,11 +143,11 @@ android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestSc
 
 ## Common recipes
 
-These use `SmartSafeAreaScaffold` because they set extra options. Skip this section if `auto` on a normal `Scaffold` is all you need.
+Use these when you want a bottom bar, colors, or another extra option.
 
 ### Add a bottom tab bar
 
-Pass your tab bar to `bottomNavigationBar`. On 3-button phones it moves up and its color fills under the buttons.
+Pass the bar to `bottomNavigationBar`. This is the right place for a custom tab bar and for Material `BottomNavigationBar`. On 3-button phones the bar moves up once, and its color fills under the system buttons. On gesture phones it stays flush.
 
 ```dart
 SmartSafeAreaScaffold(
@@ -366,7 +370,7 @@ When the user changes navigation in phone Settings and comes back to your app, i
 | Widget | Use it for |
 | --- | --- |
 | `SmartSafeAreaHost` | Turn the package on once for the whole app (Step 2). |
-| `SmartSafeAreaScaffold` | Optional. Only when you want colors, opacity, or other extra options. |
+| `SmartSafeAreaScaffold` | A bottom bar, safe-area colors, or other extra options. |
 | `SmartSafeArea` | A smarter replacement for Flutter's `SafeArea`. |
 | `SmartSystemNavBar` | A bottom bar that fills under the 3 buttons. Added for you by `SmartSafeAreaScaffold`. |
 | `SmartSafeAreaConfig` | App-wide settings. |

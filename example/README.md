@@ -2,9 +2,9 @@
 
 The smallest app you need. Two steps, no settings — it runs on `auto`.
 
-You do **not** have to replace `Scaffold`. After `SmartSafeAreaHost.materialBuilder()`, a normal `Scaffold`, `ListView`, and `SafeArea` already follow `auto`.
+You do **not** have to replace `Scaffold` for a `ListView` or Flutter's `SafeArea`. Those follow `auto` after `SmartSafeAreaHost.materialBuilder()`.
 
-This example uses `SmartSafeAreaScaffold` only because it sets extra options: a top color and a bottom color.
+A custom tab bar and Material `BottomNavigationBar` do not. Put those in `SmartSafeAreaScaffold`, which is what this example does. It also sets a top color and a bottom color.
 
 ```dart
 import 'package:flutter/material.dart';

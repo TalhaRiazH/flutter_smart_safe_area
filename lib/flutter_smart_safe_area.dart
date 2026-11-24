@@ -5,9 +5,9 @@
 /// needs it. Backgrounds stay edge-to-edge by default.
 ///
 /// ```dart
-/// void main() {
+/// Future<void> main() async {
 ///   WidgetsFlutterBinding.ensureInitialized();
-///   SmartSafeAreaHost.ensureEdgeToEdge();
+///   await SmartSafeAreaHost.ensureEdgeToEdge();
 ///   runApp(const MyApp());
 /// }
 ///
@@ -18,10 +18,7 @@
 ///   Widget build(BuildContext context) {
 ///     return MaterialApp(
 ///       builder: SmartSafeAreaHost.materialBuilder(),
-///       home: SmartSafeAreaScaffold(
-///         backgroundColor: Colors.black,
-///         body: YourScreen(),
-///       ),
+///       home: const HomeScreen(),
 ///     );
 ///   }
 /// }

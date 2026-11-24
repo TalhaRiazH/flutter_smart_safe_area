@@ -63,7 +63,16 @@ class SmartSystemNavBar extends StatelessWidget {
     );
     final bottom = insets.contentBottom;
 
-    Widget bar = child;
+    // Material BottomNavigationBar reads viewPadding, and NavigationBar reads
+    // padding. Strip both so this bar adds the smart inset once.
+    final media = MediaQuery.of(context);
+    Widget bar = MediaQuery(
+      data: media.copyWith(
+        padding: media.padding.copyWith(bottom: 0),
+        viewPadding: media.viewPadding.copyWith(bottom: 0),
+      ),
+      child: child,
+    );
     if (color != null) {
       bar = ColoredBox(color: color!, child: bar);
     }
