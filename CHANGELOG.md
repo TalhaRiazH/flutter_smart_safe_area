@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.13
+
+* Add LinkedIn profile link under the author name in the README.
+
 ## 0.1.12
 
 * Declare Android and iOS as the supported platforms.
