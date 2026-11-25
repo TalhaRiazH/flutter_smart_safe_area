@@ -1,3 +1,15 @@
+# Real-world example
+
+A production app on Android with 3-button navigation.
+
+**Without smart safe area** — the bottom bar and Play button sit under the system buttons.
+
+![Without smart safe area. App bottom bar overlaps Android 3-button navigation.](https://raw.githubusercontent.com/TalhaRiazH/flutter_smart_safe_area_images/main/screenshots/real_example_before.jpg)
+
+**With flutter_smart_safe_area** — the bottom bar lifts above Back, Home, and Recents.
+
+![With flutter_smart_safe_area. App bottom bar clears Android 3-button navigation.](https://raw.githubusercontent.com/TalhaRiazH/flutter_smart_safe_area_images/main/screenshots/real_example_after.jpg)
+
 # It handles safe areas automatically
 
 You do not set it up screen by screen. It handles the safe area on its own.
