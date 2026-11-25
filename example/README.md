@@ -7,7 +7,7 @@ You do **not** have to replace `Scaffold` for a `ListView` or Flutter's `SafeAre
 A custom tab bar and Material `BottomNavigationBar` do not. Put those in `SmartSafeAreaScaffold`, which is what this example does. It also sets a top color and a bottom color.
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 Future<void> main() async {

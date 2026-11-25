@@ -1,6 +1,6 @@
 name: flutter_smart_safe_area
 description: Smart SafeArea that auto-detects 3-button vs gesture navigation. Leave auto on — no extra parameters. Backgrounds stay edge-to-edge; content insets only when needed.
-version: 0.1.14
+version: 0.1.15
 homepage: https://github.com/TalhaRiazH/flutter_smart_safe_area
 repository: https://github.com/TalhaRiazH/flutter_smart_safe_area
 issue_tracker: https://github.com/TalhaRiazH/flutter_smart_safe_area/issues
@@ -17,12 +17,13 @@ platforms:
   ios:
 
 environment:
-  sdk: ^3.5.0
-  flutter: ">=3.24.0"
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  material_ui: ^1.2.0
 
 dev_dependencies:
   flutter_test:

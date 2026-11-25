@@ -56,9 +56,7 @@ The default mode is **`auto`**. You do **not** need to set any parameters, and y
 
 ---
 
-## Setup in 2 steps
-
-### Step 1 — Add the package
+**Step 1 — Add the package**
 
 Run this in your project folder:
 
@@ -66,12 +64,12 @@ Run this in your project folder:
 flutter pub add flutter_smart_safe_area
 ```
 
-### Step 2 — Turn it on in `main.dart`
+**Step 2 — Turn it on in `main.dart`**
 
 Copy this whole file. The two lines marked **NEW** are the only changes from a normal Flutter app.
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_safe_area/flutter_smart_safe_area.dart';
 
 Future<void> main() async {
@@ -92,6 +90,12 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
+That completes setup. Safe-area handling is now active across your app.
+
+## What more can be done
+
+The steps above are enough for most apps. Use the sections below when you need custom colors, per-screen overrides, or advanced recipes.
 
 ### Set colors once for the whole app
 

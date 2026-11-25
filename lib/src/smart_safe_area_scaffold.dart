@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'bottom_safe_area_behavior.dart';
 import 'smart_safe_area.dart';
