@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.16
+
+* README polish.
+
 ## 0.1.15
 
 * Migrate UI imports to `material_ui` (Flutter 3.44+) and make the GitHub repository public so pub.dev links resolve.

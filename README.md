@@ -424,7 +424,7 @@ When the user changes navigation in phone Settings and comes back to your app, i
 ## Author
 
 Talha Riaz  
-[LinkedIn](https://www.linkedin.com/in/talha-riaz-7a21a8219/)
+[https://www.linkedin.com/in/talha-riaz-7a21a8219/](https://www.linkedin.com/in/talha-riaz-7a21a8219/)
 
 ## License
 
